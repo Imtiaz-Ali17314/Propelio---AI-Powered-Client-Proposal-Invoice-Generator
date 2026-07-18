@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
-import BaseModal from "../ui/BaseModal.vue";
+import BaseModal from "../../components/ui/BaseModal.vue";
 import { useClientsStore } from "../../stores/clients";
 
 const props = defineProps({

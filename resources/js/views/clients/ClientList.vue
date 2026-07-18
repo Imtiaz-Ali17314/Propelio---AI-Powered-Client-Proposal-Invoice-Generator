@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import AppLayout from '../../components/layout/AppLayout.vue';
-import ClientFormModal from '../../components/clients/ClientFormModal.vue';
+import ClientFormModal from './ClientFormModal.vue';
 import { useClientsStore } from '../../stores/clients';
 
 const clientsStore = useClientsStore();
