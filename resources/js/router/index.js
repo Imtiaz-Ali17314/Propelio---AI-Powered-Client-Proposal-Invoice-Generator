@@ -20,7 +20,13 @@ const routes = [
         component: () => import("../views/Dashboard.vue"),
         meta: { requiresAuth: true },
     },
-    // Phase 2+: /clients, /proposals, /invoices routes will go here
+    {
+        path: "/clients",
+        name: "clients",
+        component: () => import("../views/clients/ClientList.vue"),
+        meta: { requiresAuth: true },
+    },
+    // Phase 3+: /proposals, /invoices routes will go here
 ];
 
 const router = createRouter({

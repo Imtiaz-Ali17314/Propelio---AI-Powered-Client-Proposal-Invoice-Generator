@@ -26,7 +26,14 @@ async function handleLogout() {
                 >
                     Dashboard
                 </router-link>
-                <!-- Phase 2+: Clients, Proposals, Invoices links go here -->
+                <router-link
+                    :to="{ name: 'clients' }"
+                    class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                    active-class="bg-indigo-50 text-indigo-600 font-medium"
+                >
+                    Clients
+                </router-link>
+                <!-- Phase 3+: Proposals, Invoices links go here -->
             </nav>
         </aside>
 
