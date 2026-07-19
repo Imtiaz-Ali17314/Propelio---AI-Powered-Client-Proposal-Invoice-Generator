@@ -65,7 +65,7 @@
                         class="flex gap-4"
                     >
                         <div
-                            class="w-24 flex-shrink-0 text-xs font-medium text-indigo-600 pt-0.5"
+                            class="w-24 shrink-0 text-xs font-medium text-indigo-600 pt-0.5"
                         >
                             {{ phase.duration }}
                         </div>
