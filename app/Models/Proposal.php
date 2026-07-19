@@ -19,11 +19,11 @@ class Proposal extends Model
         'timeline',
         'cost_breakdown',
         'status',
-        'total_amount', 
+        'generation_step',
+        'total_amount',
     ];
 
     protected $casts = [
-        'ai_generated_content' => 'array', 
         'scope' => 'array',
         'timeline' => 'array',
         'cost_breakdown' => 'array',

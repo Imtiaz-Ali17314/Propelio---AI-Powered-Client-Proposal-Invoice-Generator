@@ -15,7 +15,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('clients', ClientController::class);
 
-    // Phase 3 onwards: proposals, invoices routes will go here
-    // Route::apiResource('proposals', ProposalController::class);
+    Route::apiResource('proposals', ProposalController::class)->except(['update']);
+    Route::put('proposals/{proposal}', [ProposalController::class, 'update']);
+
+    Route::post('proposals/{proposal}/generate-scope', [ProposalController::class, 'generateScope']);
+    Route::post('proposals/{proposal}/generate-timeline', [ProposalController::class, 'generateTimeline']);
+    Route::post('proposals/{proposal}/generate-cost', [ProposalController::class, 'generateCost']);
+
+    // Phase 3 onwards: invoices routes will go here
     // Route::apiResource('invoices', InvoiceController::class);
 });
