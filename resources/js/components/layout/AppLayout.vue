@@ -40,7 +40,14 @@ async function handleLogout() {
                 >
                     📋 Proposals
                 </router-link>
-                <!-- Phase 4+: Invoices link yahan aayega -->
+                <router-link
+                    to="/invoices"
+                    active-class="bg-indigo-50 text-indigo-600"
+                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50"
+                >
+                    <!-- icon -->
+                    <span>Invoices</span>
+                </router-link>
             </nav>
         </aside>
 

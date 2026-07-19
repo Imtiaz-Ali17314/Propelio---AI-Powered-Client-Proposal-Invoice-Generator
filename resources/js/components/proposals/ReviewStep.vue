@@ -147,6 +147,13 @@
                 >
                     📄 Export PDF
                 </button>
+                <button
+                    class="px-4 py-2 border border-indigo-600 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-50"
+                    :disabled="converting"
+                    @click="convertToInvoice"
+                >
+                    {{ converting ? "Converting..." : "Convert to Invoice" }}
+                </button>
                 <router-link
                     :to="{ name: 'proposals.list' }"
                     class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-5 py-2.5 rounded-lg transition-colors"
@@ -160,6 +167,13 @@
 
 <script setup>
 import { computed } from "vue";
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useInvoicesStore } from '@/stores/invoices'
+
+const router = useRouter()
+const invoicesStore = useInvoicesStore()
+const converting = ref(false)
 
 const props = defineProps({
     proposal: Object,
@@ -171,4 +185,14 @@ const currencySymbols = { USD: "$", PKR: "₨", EUR: "€", GBP: "£" };
 const currencySymbol = computed(
     () => currencySymbols[props.proposal?.cost_breakdown?.currency] || "",
 );
+
+async function convertToInvoice() {
+  converting.value = true
+  try {
+    const invoice = await invoicesStore.convertFromProposal(props.proposal.id)
+    router.push(`/invoices/${invoice.id}`)
+  } finally {
+    converting.value = false
+  }
+}
 </script>

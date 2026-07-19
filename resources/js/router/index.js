@@ -45,7 +45,30 @@ const routes = [
         meta: { requiresAuth: true },
         props: true,
     },
-    // Phase 3+: /proposals, /invoices routes will go here
+    {
+        path: "/invoices",
+        name: "invoices.index",
+        component: () => import("@/views/invoices/InvoiceList.vue"),
+        meta: { requiresAuth: true },
+    },
+    {
+        path: "/invoices/create",
+        name: "invoices.create",
+        component: () => import("@/views/invoices/InvoiceForm.vue"),
+        meta: { requiresAuth: true },
+    },
+    {
+        path: "/invoices/:id/edit",
+        name: "invoices.edit",
+        component: () => import("@/views/invoices/InvoiceForm.vue"),
+        meta: { requiresAuth: true },
+    },
+    {
+        path: "/invoices/:id",
+        name: "invoices.show",
+        component: () => import("@/views/invoices/InvoiceShow.vue"),
+        meta: { requiresAuth: true },
+    },
 ];
 
 const router = createRouter({
