@@ -26,6 +26,25 @@ const routes = [
         component: () => import("../views/clients/ClientList.vue"),
         meta: { requiresAuth: true },
     },
+    {
+        path: "/proposals",
+        name: "proposals.list",
+        component: () => import("@/views/proposals/ProposalList.vue"),
+        meta: { requiresAuth: true },
+    },
+    {
+        path: "/proposals/new",
+        name: "proposals.new",
+        component: () => import("@/views/proposals/ProposalWizard.vue"),
+        meta: { requiresAuth: true },
+    },
+    {
+        path: "/proposals/:id",
+        name: "proposals.wizard",
+        component: () => import("@/views/proposals/ProposalWizard.vue"),
+        meta: { requiresAuth: true },
+        props: true,
+    },
     // Phase 3+: /proposals, /invoices routes will go here
 ];
 

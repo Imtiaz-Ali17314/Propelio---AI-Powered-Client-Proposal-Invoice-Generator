@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ClientController;
+use App\Http\Controllers\Api\ProposalController;
 use Illuminate\Support\Facades\Route;
 
 // Public auth routes

@@ -1,13 +1,13 @@
 <script setup>
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '../../stores/auth';
+import { useRouter } from "vue-router";
+import { useAuthStore } from "../../stores/auth";
 
 const authStore = useAuthStore();
 const router = useRouter();
 
 async function handleLogout() {
     await authStore.logout();
-    router.push({ name: 'login' });
+    router.push({ name: "login" });
 }
 </script>
 
@@ -33,17 +33,33 @@ async function handleLogout() {
                 >
                     Clients
                 </router-link>
-                <!-- Phase 3+: Proposals, Invoices links go here -->
+                <router-link
+                    :to="{ name: 'proposals.list' }"
+                    class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                    active-class="bg-indigo-50 text-indigo-600 font-medium"
+                >
+                    📋 Proposals
+                </router-link>
+                <!-- Phase 4+: Invoices link yahan aayega -->
             </nav>
         </aside>
 
         <!-- Main content -->
         <div class="flex-1 flex flex-col">
-            <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+            <header
+                class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center"
+            >
                 <div></div>
                 <div class="flex items-center gap-4">
-                    <span class="text-sm text-gray-600">{{ authStore.user?.name }}</span>
-                    <button @click="handleLogout" class="text-sm text-red-600 hover:underline">Logout</button>
+                    <span class="text-sm text-gray-600">{{
+                        authStore.user?.name
+                    }}</span>
+                    <button
+                        @click="handleLogout"
+                        class="text-sm text-red-600 hover:underline"
+                    >
+                        Logout
+                    </button>
                 </div>
             </header>
 
