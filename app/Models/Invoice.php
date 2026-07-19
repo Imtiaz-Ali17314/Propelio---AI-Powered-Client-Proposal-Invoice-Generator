@@ -52,19 +52,78 @@ class Invoice extends Model
         return $this->hasMany(InvoiceItem::class);
     }
 
-    /**
-     * Recalculate subtotal & total based on current items.
-     * Call this after items are added/updated/removed.
-     */
-    public function recalculateTotals(float $taxRate = 0): void
+    public function payments(): HasMany
     {
-        $subtotal = $this->items()->sum('amount');
-        $tax = $subtotal * ($taxRate / 100);
+        return $this->hasMany(Payment::class);
+    }
 
-        $this->update([
-            'subtotal' => $subtotal,
-            'tax' => $tax,
-            'total' => $subtotal + $tax,
-        ]);
+    // ── Derived money helpers ──────────────────────────────
+    // These are NOT stored columns for amounts paid — always computed
+    // fresh from the payments table, same "single source of truth" rule
+    // we used for Proposal cost totals.
+
+    public function getPaidAmountAttribute(): float
+    {
+        return (float) $this->payments()->sum('amount');
+    }
+
+    public function getBalanceDueAttribute(): float
+    {
+        return round((float) $this->total - $this->paidAmount, 2);
+    }
+
+    /**
+     * Recalculate subtotal/tax/total from current items.
+     * Tax is kept simple: a flat percentage passed in, defaulting to
+     * whatever is already stored on the invoice (0 if none).
+     */
+    public function recalculateTotals(?float $taxPercent = null): void
+    {
+        $subtotal = round((float) $this->items()->sum('amount'), 2);
+
+        // If a tax percent isn't explicitly passed, back-calculate the
+        // existing percent from stored tax/subtotal so edits stay consistent.
+        if ($taxPercent === null) {
+            $taxPercent = $this->subtotal > 0
+                ? round(((float) $this->tax / (float) $this->subtotal) * 100, 2)
+                : 0;
+        }
+
+        $tax = round($subtotal * ($taxPercent / 100), 2);
+
+        $this->subtotal = $subtotal;
+        $this->tax = $tax;
+        $this->total = round($subtotal + $tax, 2);
+        $this->save();
+    }
+
+    /**
+     * Recompute status from payments + due date.
+     * Manual states (cancelled) are never overwritten automatically.
+     * 'unpaid' is the implicit starting state once nothing is paid.
+     */
+    public function syncStatus(): void
+    {
+        if ($this->status === 'cancelled') {
+            return;
+        }
+
+        $paid = $this->paidAmount;
+        $total = (float) $this->total;
+
+        if ($total > 0 && $paid >= $total) {
+            $status = 'paid';
+        } elseif ($paid > 0) {
+            $status = 'partially_paid';
+        } elseif ($this->due_date && $this->due_date->isPast()) {
+            $status = 'overdue';
+        } else {
+            $status = 'unpaid';
+        }
+
+        if ($this->status !== $status) {
+            $this->status = $status;
+            $this->save();
+        }
     }
 }

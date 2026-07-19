@@ -23,6 +23,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('proposals/{proposal}/generate-timeline', [ProposalController::class, 'generateTimeline']);
     Route::post('proposals/{proposal}/generate-cost', [ProposalController::class, 'generateCost']);
 
-    // Phase 3 onwards: invoices routes will go here
-    // Route::apiResource('invoices', InvoiceController::class);
+    Route::apiResource('invoices', InvoiceController::class);
+    Route::post('proposals/{proposal}/convert-to-invoice', [InvoiceController::class, 'storeFromProposal']);
+    Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf']);
+
+    Route::get('invoices/{invoice}/payments', [PaymentController::class, 'index']);
+    Route::post('invoices/{invoice}/payments', [PaymentController::class, 'store']);
+    Route::delete('invoices/{invoice}/payments/{payment}', [PaymentController::class, 'destroy']);
 });
