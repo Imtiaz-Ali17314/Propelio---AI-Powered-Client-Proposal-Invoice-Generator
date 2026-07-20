@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from "vue";
-import BaseModal from "../../components/ui/BaseModal.vue";
-import { useClientsStore } from "../../stores/clients";
+import BaseModal from "@/components/ui/BaseModal.vue";
+import { useClientsStore } from "@/stores/clients";
 
 const props = defineProps({
     modelValue: { type: Boolean, default: false },
@@ -70,8 +70,8 @@ async function handleSubmit() {
         <form @submit.prevent="handleSubmit" class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1"
-                    >Name *</label
-                >
+                    >Name *
+                </label>
                 <input
                     v-model="form.name"
                     type="text"
