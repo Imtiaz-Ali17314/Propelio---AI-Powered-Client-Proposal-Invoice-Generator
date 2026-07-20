@@ -1,6 +1,6 @@
 <script setup>
-import AppLayout from '../components/layout/AppLayout.vue';
-import { useAuthStore } from '../stores/auth';
+import AppLayout from '@/components/layout/AppLayout.vue';
+import { useAuthStore } from '@/stores/auth';
 
 const authStore = useAuthStore();
 </script>
