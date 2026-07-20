@@ -224,7 +224,7 @@ const form = reactive({
 
 onMounted(async () => {
     if (clientsStore.clients.length === 0) {
-        await clientsStore.fetchAll();
+        await clientsStore.fetchClients();
     }
 
     if (isEdit.value) {
