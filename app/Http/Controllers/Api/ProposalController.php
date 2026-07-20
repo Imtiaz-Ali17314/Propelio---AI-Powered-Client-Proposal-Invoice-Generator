@@ -40,8 +40,13 @@ class ProposalController extends Controller
     public function show(Proposal $proposal)
     {
         $this->authorize('view', $proposal);
-
-        return response()->json($proposal->load('client'));
+    
+        $proposal->load(['client']);
+    
+        return response()->json([
+            ...$proposal->toArray(),
+            'invoices_count' => $proposal->invoices()->count(),
+        ]);
     }
 
     /**

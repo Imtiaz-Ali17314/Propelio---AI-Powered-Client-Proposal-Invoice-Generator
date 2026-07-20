@@ -147,12 +147,26 @@
                 >
                     📄 Export PDF
                 </button>
+                <div
+                    v-if="proposal.invoices_count > 0"
+                    class="text-xs text-amber-600 mb-2"
+                >
+                    This proposal already has
+                    {{ proposal.invoices_count }} invoice(s).
+                </div>
+
                 <button
                     class="px-4 py-2 border border-indigo-600 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-50"
                     :disabled="converting"
                     @click="convertToInvoice"
                 >
-                    {{ converting ? "Converting..." : "Convert to Invoice" }}
+                    {{
+                        converting
+                            ? "Converting..."
+                            : proposal.invoices_count > 0
+                              ? "Create Another Invoice"
+                              : "Convert to Invoice"
+                    }}
                 </button>
                 <router-link
                     :to="{ name: 'proposals.list' }"
@@ -167,13 +181,13 @@
 
 <script setup>
 import { computed } from "vue";
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useInvoicesStore } from '@/stores/invoices'
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useInvoicesStore } from "@/stores/invoices";
 
-const router = useRouter()
-const invoicesStore = useInvoicesStore()
-const converting = ref(false)
+const router = useRouter();
+const invoicesStore = useInvoicesStore();
+const converting = ref(false);
 
 const props = defineProps({
     proposal: Object,
@@ -187,12 +201,14 @@ const currencySymbol = computed(
 );
 
 async function convertToInvoice() {
-  converting.value = true
-  try {
-    const invoice = await invoicesStore.convertFromProposal(props.proposal.id)
-    router.push(`/invoices/${invoice.id}`)
-  } finally {
-    converting.value = false
-  }
+    converting.value = true;
+    try {
+        const invoice = await invoicesStore.convertFromProposal(
+            props.proposal.id,
+        );
+        router.push(`/invoices/${invoice.id}`);
+    } finally {
+        converting.value = false;
+    }
 }
 </script>
