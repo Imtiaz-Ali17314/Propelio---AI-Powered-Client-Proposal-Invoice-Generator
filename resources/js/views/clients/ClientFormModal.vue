@@ -2,6 +2,7 @@
 import { ref, watch } from "vue";
 import BaseModal from "@/components/ui/BaseModal.vue";
 import { useClientsStore } from "@/stores/clients";
+import { useToast } from "@/composables/useToast";
 
 const props = defineProps({
     modelValue: { type: Boolean, default: false },
@@ -11,6 +12,7 @@ const props = defineProps({
 const emit = defineEmits(["update:modelValue", "saved"]);
 
 const clientsStore = useClientsStore();
+const toast = useToast();
 
 const form = ref({
     name: "",
@@ -48,13 +50,19 @@ async function handleSubmit() {
     try {
         if (props.client) {
             await clientsStore.updateClient(props.client.id, form.value);
+            toast.success("Client updated successfully.");
         } else {
             await clientsStore.createClient(form.value);
+            toast.success("Client added successfully.");
         }
         emit("saved");
         emit("update:modelValue", false);
     } catch (err) {
         errors.value = err.response?.data?.errors ?? {};
+        toast.error(
+            err.response?.data?.message ||
+                "Failed to save client. Please check the form and try again.",
+        );
     } finally {
         isSaving.value = false;
     }

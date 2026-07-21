@@ -2,9 +2,11 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import { useToast } from '@/composables/useToast';
 
 const authStore = useAuthStore();
 const router = useRouter();
+const toast = useToast();
 
 const form = ref({
     name: '',
@@ -19,9 +21,11 @@ async function handleSubmit() {
     errors.value = {};
     try {
         await authStore.register(form.value);
+        toast.success('Account created — welcome to Propelio!');
         router.push({ name: 'dashboard' });
     } catch (err) {
         errors.value = authStore.error ?? {};
+        toast.error('Please fix the errors below and try again.');
     }
 }
 </script>

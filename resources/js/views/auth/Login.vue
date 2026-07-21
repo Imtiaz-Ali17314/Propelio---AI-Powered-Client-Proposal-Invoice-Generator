@@ -2,24 +2,24 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import { useToast } from '@/composables/useToast';
 
 const authStore = useAuthStore();
 const router = useRouter();
+const toast = useToast();
 
 const form = ref({
     email: '',
     password: '',
 });
 
-const errorMessage = ref('');
-
 async function handleSubmit() {
-    errorMessage.value = '';
     try {
         await authStore.login(form.value);
+        toast.success('Welcome back!');
         router.push({ name: 'dashboard' });
     } catch (err) {
-        errorMessage.value = 'Invalid email or password.';
+        toast.error('Invalid email or password.');
     }
 }
 </script>
@@ -28,8 +28,6 @@ async function handleSubmit() {
     <div class="min-h-screen flex items-center justify-center bg-gray-50">
         <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-md">
             <h1 class="text-2xl font-bold mb-6 text-gray-800">Login to Propelio</h1>
-
-            <p v-if="errorMessage" class="text-red-600 text-sm mb-4">{{ errorMessage }}</p>
 
             <form @submit.prevent="handleSubmit" class="space-y-4">
                 <div>

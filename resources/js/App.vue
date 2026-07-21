@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted } from 'vue';
 import { useAuthStore } from './stores/auth';
+import ToastContainer from './components/ui/ToastContainer.vue';
 
 const authStore = useAuthStore();
 
@@ -11,4 +12,5 @@ onMounted(() => {
 
 <template>
     <router-view />
+    <ToastContainer />
 </template>

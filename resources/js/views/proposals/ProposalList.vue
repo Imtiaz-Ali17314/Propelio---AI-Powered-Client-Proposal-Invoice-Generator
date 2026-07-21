@@ -77,8 +77,10 @@
 import { onMounted } from 'vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { useProposalsStore } from '@/stores/proposals'
+import { useToast } from '@/composables/useToast'
 
 const store = useProposalsStore()
+const toast = useToast()
 
 onMounted(() => {
   store.fetchProposals()
@@ -100,6 +102,11 @@ function formatCurrency(amount) {
 
 async function confirmDelete(proposal) {
   if (!confirm(`"${proposal.title}" delete karna hai? Ye action undo nahi ho sakta.`)) return
-  await store.deleteProposal(proposal.id)
+  try {
+    await store.deleteProposal(proposal.id)
+    toast.success(`"${proposal.title}" deleted.`)
+  } catch (err) {
+    toast.error(store.error || 'Failed to delete proposal.')
+  }
 }
 </script>

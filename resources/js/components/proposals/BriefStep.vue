@@ -101,12 +101,14 @@ import { ref, reactive, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useProposalsStore } from "@/stores/proposals";
 import { useClientsStore } from "@/stores/clients";
+import { useToast } from "@/composables/useToast";
 
 const emit = defineEmits(["created"]);
 
 const route = useRoute();
 const store = useProposalsStore();
 const clientsStore = useClientsStore();
+const toast = useToast();
 
 const submitting = ref(false);
 
@@ -140,7 +142,7 @@ async function handleSubmit() {
         });
         emit("created", proposal);
     } catch (err) {
-        // Error already store.error mein set ho chuka hai, parent banner dikhayega
+        toast.error(store.error || "Failed to create proposal. Please try again.");
     } finally {
         submitting.value = false;
     }

@@ -3,8 +3,10 @@ import { ref, onMounted } from 'vue';
 import AppLayout from '@/components/layout/AppLayout.vue';
 import ClientFormModal from './ClientFormModal.vue';
 import { useClientsStore } from '@/stores/clients';
+import { useToast } from '@/composables/useToast';
 
 const clientsStore = useClientsStore();
+const toast = useToast();
 
 const showModal = ref(false);
 const editingClient = ref(null);
@@ -26,7 +28,14 @@ function openEditModal(client) {
 
 async function handleDelete(client) {
     if (!confirm(`Delete client "${client.name}"? This cannot be undone.`)) return;
-    await clientsStore.deleteClient(client.id);
+    try {
+        await clientsStore.deleteClient(client.id);
+        toast.success(`Client "${client.name}" deleted.`);
+    } catch (err) {
+        toast.error(
+            err.response?.data?.message || 'Failed to delete client.',
+        );
+    }
 }
 
 let searchTimeout = null;
@@ -60,7 +69,7 @@ function handleSearchInput() {
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm min-w-[720px]">
+            <table class="w-full text-left text-sm min-w-180">
                 <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
                     <tr>
                         <th class="px-6 py-3">Name</th>

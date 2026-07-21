@@ -51,14 +51,6 @@
                 {{ steps.find((s) => s.key === currentStep)?.label }}
             </p>
 
-            <!-- Error Banner -->
-            <div
-                v-if="store.error"
-                class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"
-            >
-                {{ store.error }}
-            </div>
-
             <!-- Step Content -->
             <div
                 class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8"
@@ -112,6 +104,7 @@ import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import { useProposalsStore } from "@/stores/proposals";
+import { useToast } from "@/composables/useToast";
 
 import BriefStep from "@/components/proposals/BriefStep.vue";
 import ScopeStep from "@/components/proposals/ScopeStep.vue";
@@ -122,6 +115,7 @@ import ReviewStep from "@/components/proposals/ReviewStep.vue";
 const route = useRoute();
 const router = useRouter();
 const store = useProposalsStore();
+const toast = useToast();
 
 const steps = [
     { key: "brief", label: "Brief" },
@@ -170,6 +164,7 @@ function goToStep(stepKey) {
 }
 
 async function handleBriefCreated(newProposal) {
+    toast.success("Proposal created — let's generate the scope.");
     currentStep.value = "scope";
     // Router URL update kar do taake refresh pe proposal load ho sake
     router.replace({
@@ -179,34 +174,69 @@ async function handleBriefCreated(newProposal) {
 }
 
 async function handleGenerateScope() {
-    await store.generateScope(proposal.value.id);
+    try {
+        await store.generateScope(proposal.value.id);
+        toast.success("Scope generated successfully.");
+    } catch (err) {
+        toast.error(store.error || "Failed to generate scope. Please try again.");
+    }
 }
 
 async function handleUpdateScope(scopeData) {
-    await store.updateProposal(proposal.value.id, { scope: scopeData });
+    try {
+        await store.updateProposal(proposal.value.id, { scope: scopeData });
+        toast.success("Scope saved.");
+    } catch (err) {
+        toast.error(store.error || "Failed to save scope.");
+    }
 }
 
 async function handleGenerateTimeline() {
-    await store.generateTimeline(proposal.value.id);
+    try {
+        await store.generateTimeline(proposal.value.id);
+        toast.success("Timeline generated successfully.");
+    } catch (err) {
+        toast.error(store.error || "Failed to generate timeline. Please try again.");
+    }
 }
 
 async function handleUpdateTimeline(timelineData) {
-    await store.updateProposal(proposal.value.id, { timeline: timelineData });
+    try {
+        await store.updateProposal(proposal.value.id, { timeline: timelineData });
+        toast.success("Timeline saved.");
+    } catch (err) {
+        toast.error(store.error || "Failed to save timeline.");
+    }
 }
 
 async function handleGenerateCost() {
-    await store.generateCost(proposal.value.id);
+    try {
+        await store.generateCost(proposal.value.id);
+        toast.success("Cost breakdown generated successfully.");
+    } catch (err) {
+        toast.error(store.error || "Failed to generate cost breakdown. Please try again.");
+    }
 }
 
 async function handleUpdateCost(costData) {
-    await store.updateProposal(proposal.value.id, { cost_breakdown: costData });
+    try {
+        await store.updateProposal(proposal.value.id, { cost_breakdown: costData });
+        toast.success("Cost breakdown saved.");
+    } catch (err) {
+        toast.error(store.error || "Failed to save cost breakdown.");
+    }
 }
 
 async function handleFinish() {
-    await store.updateProposal(proposal.value.id, {
-        generation_step: "completed",
-    });
-    currentStep.value = "review";
+    try {
+        await store.updateProposal(proposal.value.id, {
+            generation_step: "completed",
+        });
+        toast.success("Proposal completed! 🎉");
+        currentStep.value = "review";
+    } catch (err) {
+        toast.error(store.error || "Failed to finish proposal.");
+    }
 }
 
 async function initWizard() {
