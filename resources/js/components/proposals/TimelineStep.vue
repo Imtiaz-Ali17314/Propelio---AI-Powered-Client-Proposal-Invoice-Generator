@@ -1,7 +1,7 @@
 <!-- resources/js/components/proposals/TimelineStep.vue -->
 <template>
     <div>
-        <div class="flex items-center justify-between mb-1">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
             <h2 class="text-xl font-semibold text-gray-900">
                 Project Timeline
             </h2>
@@ -59,25 +59,27 @@
                     :key="index"
                     class="border border-gray-200 rounded-lg p-4 mb-3 space-y-2"
                 >
-                    <div class="flex gap-2">
+                    <div class="flex flex-col sm:flex-row gap-2">
                         <input
                             v-model="phase.name"
                             type="text"
                             placeholder="Phase name"
                             class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-indigo-500"
                         />
-                        <input
-                            v-model="phase.duration"
-                            type="text"
-                            placeholder="Duration"
-                            class="w-28 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"
-                        />
-                        <button
-                            @click="local.phases.splice(index, 1)"
-                            class="text-red-400 hover:text-red-600 px-2"
-                        >
-                            ✕
-                        </button>
+                        <div class="flex gap-2">
+                            <input
+                                v-model="phase.duration"
+                                type="text"
+                                placeholder="Duration"
+                                class="flex-1 sm:w-28 sm:flex-none border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"
+                            />
+                            <button
+                                @click="local.phases.splice(index, 1)"
+                                class="text-red-400 hover:text-red-600 px-2 shrink-0"
+                            >
+                                ✕
+                            </button>
+                        </div>
                     </div>
                     <textarea
                         v-model="phase.description"

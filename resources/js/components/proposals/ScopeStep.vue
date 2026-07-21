@@ -1,7 +1,7 @@
 <!-- resources/js/components/proposals/ScopeStep.vue -->
 <template>
     <div>
-        <div class="flex items-center justify-between mb-1">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
             <h2 class="text-xl font-semibold text-gray-900">Project Scope</h2>
             <button
                 v-if="proposal?.scope"

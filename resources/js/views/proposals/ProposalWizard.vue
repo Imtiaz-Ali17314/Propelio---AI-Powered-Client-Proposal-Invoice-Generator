@@ -8,7 +8,7 @@
                     <button
                         @click="goToStep(step.key)"
                         :disabled="!canNavigateTo(step.key)"
-                        class="flex flex-col items-center gap-2 group"
+                        class="flex flex-col items-center gap-1 sm:gap-2 group shrink-0"
                         :class="
                             canNavigateTo(step.key)
                                 ? 'cursor-pointer'
@@ -16,14 +16,14 @@
                         "
                     >
                         <div
-                            class="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-colors"
+                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-semibold text-xs sm:text-sm transition-colors"
                             :class="stepCircleClass(step.key)"
                         >
                             <span v-if="isStepCompleted(step.key)">✓</span>
                             <span v-else>{{ index + 1 }}</span>
                         </div>
                         <span
-                            class="text-xs font-medium"
+                            class="hidden sm:inline text-xs font-medium"
                             :class="
                                 currentStep === step.key
                                     ? 'text-indigo-600'
@@ -36,7 +36,7 @@
 
                     <div
                         v-if="index < steps.length - 1"
-                        class="flex-1 h-0.5 mx-2"
+                        class="flex-1 h-0.5 mx-1 sm:mx-2"
                         :class="
                             isStepCompleted(step.key)
                                 ? 'bg-indigo-600'
@@ -45,6 +45,11 @@
                     ></div>
                 </template>
             </div>
+
+            <!-- Current step label (mobile only, since the stepper labels are hidden below sm) -->
+            <p class="sm:hidden text-center text-sm font-medium text-indigo-600 -mt-6 mb-8">
+                {{ steps.find((s) => s.key === currentStep)?.label }}
+            </p>
 
             <!-- Error Banner -->
             <div
@@ -103,7 +108,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import { useProposalsStore } from "@/stores/proposals";
@@ -204,7 +209,7 @@ async function handleFinish() {
     currentStep.value = "review";
 }
 
-onMounted(async () => {
+async function initWizard() {
     if (route.params.id) {
         const loaded = await store.fetchProposal(route.params.id);
         // Existing proposal resume karo uske generation_step ke hisaab se
@@ -216,6 +221,26 @@ onMounted(async () => {
             completed: "review",
         };
         currentStep.value = map[loaded.generation_step] || "brief";
+    } else {
+        // "New Proposal" — purani proposal ka state (Pinia store) clear karo,
+        // warna Vue Router isi component instance ko reuse karta hai (kyunke
+        // /proposals/new aur /proposals/:id dono ek hi component render karte
+        // hain) aur purani proposal ka data reh jata hai — Brief null aane ki
+        // bajaye, baaki steps purane data se pre-filled dikhte the aur stepper
+        // bhi purane generation_step ke hisaab se sab "completed" dikha raha
+        // tha. Fresh start ke liye store aur local step dono reset karna zaroori hai.
+        store.currentProposal = null;
+        store.error = null;
+        currentStep.value = "brief";
     }
-});
+}
+
+onMounted(initWizard);
+
+// route.params.id badalne par bhi wizard re-init ho (jab Vue Router same
+// component instance reuse karta hai aur onMounted dobara nahi chalta).
+watch(
+    () => route.params.id,
+    () => initWizard(),
+);
 </script>

@@ -1,7 +1,7 @@
 <!-- resources/js/components/proposals/CostStep.vue -->
 <template>
     <div>
-        <div class="flex items-center justify-between mb-1">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
             <h2 class="text-xl font-semibold text-gray-900">Cost Breakdown</h2>
             <button
                 v-if="proposal?.cost_breakdown"
@@ -46,7 +46,7 @@
                 <div
                     v-for="(item, index) in local.items"
                     :key="index"
-                    class="flex gap-2 mb-2 items-center"
+                    class="flex flex-col sm:flex-row gap-2 mb-2 sm:items-center"
                 >
                     <input
                         v-model="item.label"
@@ -54,25 +54,27 @@
                         placeholder="Item label"
                         class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"
                     />
-                    <div class="relative w-36">
-                        <span
-                            class="absolute left-3 top-2 text-sm text-gray-400"
-                            >{{ currencySymbol }}</span
+                    <div class="flex gap-2 items-center">
+                        <div class="relative flex-1 sm:w-36 sm:flex-none">
+                            <span
+                                class="absolute left-3 top-2 text-sm text-gray-400"
+                                >{{ currencySymbol }}</span
+                            >
+                            <input
+                                v-model.number="item.amount"
+                                type="number"
+                                min="0"
+                                step="1"
+                                class="w-full border border-gray-300 rounded-lg pl-7 pr-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"
+                            />
+                        </div>
+                        <button
+                            @click="local.items.splice(index, 1)"
+                            class="text-red-400 hover:text-red-600 px-2 shrink-0"
                         >
-                        <input
-                            v-model.number="item.amount"
-                            type="number"
-                            min="0"
-                            step="1"
-                            class="w-full border border-gray-300 rounded-lg pl-7 pr-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"
-                        />
+                            ✕
+                        </button>
                     </div>
-                    <button
-                        @click="local.items.splice(index, 1)"
-                        class="text-red-400 hover:text-red-600 px-2"
-                    >
-                        ✕
-                    </button>
                 </div>
                 <button
                     @click="local.items.push({ label: '', amount: 0 })"
