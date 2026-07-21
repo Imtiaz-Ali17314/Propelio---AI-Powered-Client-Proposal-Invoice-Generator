@@ -192,6 +192,14 @@
                         }}
                     </button>
 
+                    <button
+                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-300 border border-slate-700/60 hover:bg-slate-800/60 hover:text-white transition-all duration-200"
+                        @click="downloadPdf"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Download PDF
+                    </button>
+
                     <router-link
                         :to="{ name: 'proposals.list' }"
                         class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-600/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ring-1 ring-white/20"
@@ -208,10 +216,12 @@
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useInvoicesStore } from "@/stores/invoices";
+import { useProposalsStore } from "@/stores/proposals";
 import { useToast } from "@/composables/useToast";
 
 const router = useRouter();
 const invoicesStore = useInvoicesStore();
+const proposalsStore = useProposalsStore();
 const toast = useToast();
 const converting = ref(false);
 const confirmingConvert = ref(false);
@@ -226,6 +236,10 @@ const currencySymbols = { USD: "$", PKR: "₨", EUR: "€", GBP: "£" };
 const currencySymbol = computed(
     () => currencySymbols[props.proposal?.cost_breakdown?.currency] || "",
 );
+
+function downloadPdf() {
+    proposalsStore.downloadPdf(props.proposal.id);
+}
 
 function handleConvertClick() {
     // First invoice for this proposal — go straight through, no friction.

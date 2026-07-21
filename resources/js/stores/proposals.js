@@ -161,5 +161,9 @@ export const useProposalsStore = defineStore("proposals", {
                 this.loading = false;
             }
         },
+
+        downloadPdf(id) {
+            window.open(`/api/proposals/${id}/pdf`, "_blank");
+        },
     },
 });

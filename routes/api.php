@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('proposals/{proposal}/generate-scope', [ProposalController::class, 'generateScope']);
     Route::post('proposals/{proposal}/generate-timeline', [ProposalController::class, 'generateTimeline']);
     Route::post('proposals/{proposal}/generate-cost', [ProposalController::class, 'generateCost']);
+    Route::get('proposals/{proposal}/pdf', [ProposalController::class, 'downloadPdf']);
 
     Route::apiResource('invoices', InvoiceController::class);
     Route::post('proposals/{proposal}/convert-to-invoice', [InvoiceController::class, 'storeFromProposal']);

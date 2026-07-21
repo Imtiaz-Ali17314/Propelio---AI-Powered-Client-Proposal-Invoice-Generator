@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Proposal;
 use App\Models\Client;
 use App\Services\GroqService;
+use App\Services\ProposalPdfService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -194,5 +195,17 @@ class ProposalController extends Controller
         $proposal->delete();
 
         return response()->json(['message' => 'Proposal deleted.']);
+    }
+
+    /**
+     * GET /api/proposals/{proposal}/pdf
+     */
+    public function downloadPdf(Proposal $proposal, ProposalPdfService $pdfService)
+    {
+        $this->authorize('view', $proposal);
+
+        $proposal->load(['client', 'user']);
+
+        return $pdfService->stream($proposal);
     }
 }
