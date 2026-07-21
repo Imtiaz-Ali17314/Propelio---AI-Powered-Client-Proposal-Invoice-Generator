@@ -128,7 +128,7 @@
                                     Total Amount
                                 </td>
                                 <td
-                                    class="px-4 py-3 text-right font-extrabold text-base bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent tabular-nums"
+                                    class="px-4 py-3 text-right font-extrabold text-base bg-linear-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent tabular-nums"
                                 >
                                     {{ currencySymbol
                                     }}{{
@@ -180,7 +180,7 @@
                             Cancel
                         </button>
                         <button
-                            class="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-semibold hover:from-indigo-500 hover:to-violet-500"
+                            class="px-4 py-2 bg-linear-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-semibold hover:from-indigo-500 hover:to-violet-500"
                             :disabled="converting"
                             @click="convertToInvoice"
                         >
@@ -205,7 +205,7 @@
 
                     <router-link
                         :to="{ name: 'proposals.list' }"
-                        class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-600/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ring-1 ring-white/20"
+                        class="inline-flex items-center gap-2 bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-600/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ring-1 ring-white/20"
                     >
                         <span>Save & Go to Hub</span>
                     </router-link>

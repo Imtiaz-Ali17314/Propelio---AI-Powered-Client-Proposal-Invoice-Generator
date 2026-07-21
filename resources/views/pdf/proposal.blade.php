@@ -28,23 +28,23 @@
         }
 
         .logo-letter {
-            width: 52px; 
-            height: 44px; 
+            width: 66px; 
+            height: 56px; 
             background-color: #4f46e5; 
-            border-radius: 8px; 
-            -webkit-border-radius: 8px; 
+            border-radius: 10px; 
+            -webkit-border-radius: 10px; 
             text-align: center; 
             vertical-align: middle; 
-            padding-bottom: 6px; 
-            font-size: 22px; 
+            padding-bottom: 10px; 
+            font-size: 26px; 
             font-weight: bold; 
             color: #ffffff;
         }
 
         .agency-name {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
-            margin-top: 6px;
+            margin-top: 8px;
             color: #111827;
         }
 
@@ -54,33 +54,53 @@
             text-align: right;
         }
 
-        .proposal-title-label {
-            font-size: 9px;
+        .proposal-title {
+            font-size: 26px;
             font-weight: bold;
             color: #4f46e5;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
         }
 
-        .proposal-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #111827;
-            margin-top: 2px;
-            line-height: 1.2;
-        }
-
-        .proposal-status {
-            font-size: 10px;
+        .proposal-number {
+            font-size: 12px;
             color: #6b7280;
-            margin-top: 6px;
+            margin-top: 4px;
+        }
+
+        .status-table {
+            margin-left: auto;
+            border-collapse: collapse;
+            margin-top: 8px;
+        }
+
+        .status-cell {
+            padding: 4px 12px;
+            font-size: 10px;
+            font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
+        .proposal-status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 6px;
+        }
+
+        .proposal-date {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
         .divider {
             border-top: 2px solid #f3f4f6;
-            margin: 20px 0;
+            margin: 15px 0 20px 0;
         }
 
         .info-table {
@@ -143,7 +163,6 @@
             color: #374151;
         }
 
-        /* Timeline phases */
         .timeline-table {
             width: 100%;
             border-collapse: collapse;
@@ -184,7 +203,6 @@
             line-height: 1.5;
         }
 
-        /* Cost Breakdown Table */
         table.cost-table {
             width: 100%;
             border-collapse: collapse;
@@ -254,30 +272,64 @@
         $currencySymbols = ['USD' => '$', 'PKR' => '₨', 'EUR' => '€', 'GBP' => '£'];
         $currencyCode = $proposal->cost_breakdown['currency'] ?? 'USD';
         $currencySymbol = $currencySymbols[$currencyCode] ?? $currencyCode . ' ';
+
+        $statusColors = [
+            'draft' => ['bg' => '#fef3c7', 'text' => '#92400e'],
+            'sent' => ['bg' => '#dbeafe', 'text' => '#1e40af'],
+            'accepted' => ['bg' => '#d1fae5', 'text' => '#065f46'],
+            'rejected' => ['bg' => '#fee2e2', 'text' => '#991b1b'],
+        ];
+        $statusColor = $statusColors[$proposal->status] ?? $statusColors['draft'];
     @endphp
 
-    <table class="header-table">
-        <tr>
-            <td class="logo-cell">
-                <table class="logo-table">
-                    <tr>
-                        <td class="logo-letter">
-                            {{ strtoupper(substr($proposal->user->name ?? 'A', 0, 1)) }}
-                        </td>
-                    </tr>
-                </table>
-                <div class="agency-name">{{ $proposal->user->name ?? 'Your Agency' }}</div>
-                <div class="value" style="color: #6b7280;">{{ $proposal->user->email ?? '' }}</div>
-            </td>
-            <td class="meta-cell">
-                <div class="proposal-title-label">Project Proposal</div>
-                <div class="proposal-title">{{ $proposal->title }}</div>
-                <div class="proposal-status">Status: {{ ucfirst($proposal->status) }}</div>
-            </td>
-        </tr>
-    </table>
+    {{-- Top bar: logo/agency on left, INVOICE STYLE header on right --}}
+   <table class="header-table">
+    <tr>
+        <td class="logo-cell">
+            <table class="logo-table">
+                <tr>
+                    <td class="logo-letter">
+                        {{ strtoupper(substr($proposal->user->name ?? 'A', 0, 1)) }}
+                    </td>
+                </tr>
+            </table>
+
+            <div class="agency-name">{{ $proposal->user->name ?? 'Your Agency' }}</div>
+            <div class="value">{{ $proposal->user->email ?? '' }}</div>
+        </td>
+
+        <td class="meta-cell">
+            <div class="proposal-title">PROPOSAL</div>
+
+            <div class="proposal-number">
+                {{ $proposal->proposal_number ?? ('#'.$proposal->id) }}
+            </div>
+
+            <table class="status-table">
+                <tr>
+                    <td class="status-cell"
+                        style="background-color: {{ $statusColor['bg'] }}; color: {{ $statusColor['text'] }};">
+                        {{ str_replace('_', ' ', $proposal->status) }}
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
 
     <div class="divider"></div>
+
+    {{-- Full-width left-aligned proposal title --}}
+    <div style="margin-bottom: 22px; padding-bottom: 18px; border-bottom: 1px solid #e5e7eb;">
+        <div style="font-size: 9px; font-weight: bold; color: #9ca3af; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 5px;">Proposal Title</div>
+        <div class="proposal-title">{{ $proposal->title }}</div>
+        @if($proposal->total_amount > 0)
+            <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
+                Estimated Budget:
+                <strong style="color: #4f46e5;">{{ $currencySymbol }}{{ number_format($proposal->total_amount, 2) }}</strong>
+            </div>
+        @endif
+    </div>
 
     <table class="info-table">
         <tr>
@@ -294,12 +346,11 @@
                 </div>
             </td>
             <td style="text-align: right;">
-                <div class="label">Proposal Date</div>
-                <div class="value">{{ $proposal->created_at->format('d M, Y') }}</div>
-                @if($proposal->total_amount > 0)
-                    <div class="label" style="margin-top: 10px;">Estimated Budget</div>
-                    <div class="value" style="font-weight: bold; color: #4f46e5;">{{ $currencySymbol }}{{ number_format($proposal->total_amount, 2) }}</div>
-                @endif
+                <div class="label">Prepared By</div>
+                <div class="value">
+                    <strong>{{ $proposal->user->name ?? 'Your Agency' }}</strong><br>
+                    {{ $proposal->user->email ?? '' }}
+                </div>
             </td>
         </tr>
     </table>
