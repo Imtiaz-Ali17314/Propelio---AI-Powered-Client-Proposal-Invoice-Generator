@@ -170,9 +170,11 @@ const userInitials = computed(() => {
                 </div>
             </header>
 
-            <main class="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto max-w-7xl w-full mx-auto">
-                <slot />
-            </main>
+            <div class="flex-1 overflow-y-auto w-full min-h-0">
+                <main class="p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+                    <slot />
+                </main>
+            </div>
         </div>
     </div>
 </template>

@@ -10,6 +10,17 @@
         </div>
 
         <div v-else-if="invoice" class="max-w-3xl mx-auto py-6 px-2 sm:px-4 space-y-6">
+            <!-- Back Navigation -->
+            <div>
+                <router-link
+                    to="/invoices"
+                    class="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-indigo-400 transition-colors px-3 py-1.5 rounded-lg hover:bg-slate-900/60 ring-1 ring-transparent hover:ring-slate-800"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    <span>Back to Invoices</span>
+                </router-link>
+            </div>
+
             <!-- Header -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
