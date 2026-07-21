@@ -1,20 +1,31 @@
 <template>
     <div v-if="proposal">
-        <div class="flex items-center justify-between mb-6 pb-5 border-b border-slate-800/80">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 pb-5 border-b border-slate-800/80">
             <div>
-                <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">
-                    {{ proposal.title }}
-                </h2>
+                <div class="flex items-center gap-3">
+                    <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                        {{ proposal.title }}
+                    </h2>
+                    <span
+                        class="bg-emerald-500/15 text-emerald-400 text-[10px] font-bold px-2.5 py-1 rounded-full ring-1 ring-emerald-500/30 uppercase tracking-wider shrink-0"
+                    >
+                        {{ proposal.status }}
+                    </span>
+                </div>
                 <p class="text-sm text-slate-400 mt-1 flex items-center gap-1.5">
                     <span>Prepared for</span>
                     <span class="font-semibold text-slate-200">{{ proposal.client?.name || "Client" }}</span>
                 </p>
             </div>
-            <span
-                class="bg-emerald-500/15 text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-full ring-1 ring-emerald-500/30 uppercase tracking-wider"
-            >
-                Ready to Send
-            </span>
+            <div class="flex items-center gap-2.5 self-start sm:self-auto shrink-0">
+                <button
+                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ring-1 ring-white/20"
+                    @click="downloadPdf"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <span>Download PDF</span>
+                </button>
+            </div>
         </div>
 
         <div class="space-y-8">
@@ -190,14 +201,6 @@
                                   ? "Create Another Invoice"
                                   : "Convert to Invoice"
                         }}
-                    </button>
-
-                    <button
-                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-300 border border-slate-700/60 hover:bg-slate-800/60 hover:text-white transition-all duration-200"
-                        @click="downloadPdf"
-                    >
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        Download PDF
                     </button>
 
                     <router-link
