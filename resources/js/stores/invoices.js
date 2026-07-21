@@ -125,7 +125,9 @@ export const useInvoicesStore = defineStore("invoices", {
                 return data;
             } catch (e) {
                 this.error =
-                    e.response?.data?.message || "Failed to record payment.";
+                    e.response?.data?.errors?.amount?.[0] ||
+                    e.response?.data?.message ||
+                    "Failed to record payment.";
                 throw e;
             } finally {
                 this.saving = false;

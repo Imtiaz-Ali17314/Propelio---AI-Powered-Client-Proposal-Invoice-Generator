@@ -22,17 +22,20 @@
         <form
             v-if="showForm"
             @submit.prevent="handleSubmit"
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 mb-5 items-start bg-slate-950/40 rounded-xl p-4 ring-1 ring-slate-800/60"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 mb-1 items-start bg-slate-950/40 rounded-xl p-4 ring-1 ring-slate-800/60"
         >
-            <input
-                v-model.number="form.amount"
-                type="number"
-                min="0.01"
-                step="0.01"
-                placeholder="Amount"
-                required
-                class="bg-slate-950/80 border border-slate-700/60 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-200"
-            />
+            <div>
+                <input
+                    v-model.number="form.amount"
+                    type="number"
+                    min="0.01"
+                    :max="invoice.balance_due"
+                    step="0.01"
+                    placeholder="Amount"
+                    required
+                    class="w-full bg-slate-950/80 border border-slate-700/60 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-200"
+                />
+            </div>
             <input
                 v-model="form.paid_at"
                 type="date"
@@ -56,6 +59,12 @@
                 Save
             </button>
         </form>
+        <p v-if="showForm" class="text-xs text-slate-500 mb-4 px-1">
+            Remaining balance:
+            <span class="text-slate-300 font-semibold"
+                >${{ formatMoney(invoice.balance_due) }}</span
+            >
+        </p>
 
         <div v-if="invoice.payments?.length" class="divide-y divide-slate-800/40">
             <div
@@ -128,6 +137,13 @@ function formatMoney(value) {
 }
 
 async function handleSubmit() {
+    if (form.amount > props.invoice.balance_due) {
+        toast.error(
+            `Payment cannot exceed the remaining balance of $${formatMoney(props.invoice.balance_due)}.`,
+        );
+        return;
+    }
+
     try {
         await store.recordPayment(props.invoice.id, form);
         toast.success("Payment recorded successfully.");
