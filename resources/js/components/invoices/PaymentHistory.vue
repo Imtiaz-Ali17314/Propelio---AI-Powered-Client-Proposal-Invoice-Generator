@@ -16,7 +16,7 @@
         <form
             v-if="showForm"
             @submit.prevent="handleSubmit"
-            class="grid grid-cols-4 gap-2 mb-4 items-start"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-4 items-start"
         >
             <input
                 v-model.number="form.amount"
@@ -55,9 +55,9 @@
             <div
                 v-for="payment in invoice.payments"
                 :key="payment.id"
-                class="flex items-center justify-between py-2.5 text-sm"
+                class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 py-2.5 text-sm"
             >
-                <div>
+                <div class="flex flex-wrap items-center gap-x-2">
                     <span class="text-gray-900 font-medium"
                         >${{ formatMoney(payment.amount) }}</span
                     >

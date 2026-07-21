@@ -33,7 +33,7 @@
 
             <!-- Summary -->
             <div
-                class="bg-white border border-gray-200 rounded-xl p-5 grid grid-cols-4 gap-4 text-sm"
+                class="bg-white border border-gray-200 rounded-xl p-5 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm"
             >
                 <div>
                     <p class="text-gray-400 text-xs uppercase mb-1">Total</p>
@@ -67,7 +67,8 @@
             <div
                 class="bg-white border border-gray-200 rounded-xl overflow-hidden"
             >
-                <table class="w-full text-sm">
+                <div class="overflow-x-auto">
+                <table class="w-full text-sm min-w-[500px]">
                     <thead class="bg-gray-50 text-gray-500 text-xs uppercase">
                         <tr>
                             <th class="text-left px-5 py-2.5">Description</th>
@@ -91,6 +92,7 @@
                         </tr>
                     </tbody>
                 </table>
+                </div>
                 <div
                     class="px-5 py-3 border-t border-gray-100 flex justify-end"
                 >

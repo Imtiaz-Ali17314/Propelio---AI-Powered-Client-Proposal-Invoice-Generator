@@ -59,7 +59,8 @@ function handleSearchInput() {
         />
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <table class="w-full text-left text-sm">
+            <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm min-w-[720px]">
                 <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
                     <tr>
                         <th class="px-6 py-3">Name</th>
@@ -96,6 +97,7 @@ function handleSearchInput() {
                     </tr>
                 </tbody>
             </table>
+            </div>
         </div>
 
         <ClientFormModal v-model="showModal" :client="editingClient" />

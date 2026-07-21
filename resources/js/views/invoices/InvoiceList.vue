@@ -25,7 +25,8 @@
     </div>
 
     <div v-else class="bg-white border border-gray-200 rounded-xl overflow-hidden">
-      <table class="w-full text-sm">
+      <div class="overflow-x-auto">
+      <table class="w-full text-sm min-w-[640px]">
         <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
           <tr>
             <th class="text-left px-5 py-3">Invoice #</th>
@@ -61,6 +62,7 @@
           </tr>
         </tbody>
       </table>
+      </div>
     </div>
   </AppLayout>
 </template>

@@ -16,6 +16,7 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
+        "chart.js": "^4.4.7",
         "pinia": "^4.0.2",
         "vue": "^3.5.40",
         "vue-router": "^5.2.0"

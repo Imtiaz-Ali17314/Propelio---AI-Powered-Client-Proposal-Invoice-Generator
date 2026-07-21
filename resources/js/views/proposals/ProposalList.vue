@@ -35,7 +35,7 @@
         <div
           v-for="proposal in store.proposals"
           :key="proposal.id"
-          class="bg-white border border-gray-100 rounded-xl p-5 flex items-center justify-between hover:shadow-sm transition-shadow"
+          class="bg-white border border-gray-100 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 hover:shadow-sm transition-shadow"
         >
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-3 mb-1">
@@ -56,7 +56,7 @@
             </p>
           </div>
 
-          <div class="flex items-center gap-2 shrink-0 ml-4">
+          <div class="flex items-center gap-2 shrink-0 sm:ml-4">
             <router-link
               :to="{ name: 'proposals.wizard', params: { id: proposal.id } }"
               class="text-sm text-indigo-600 hover:text-indigo-700 font-medium px-3 py-1.5"
