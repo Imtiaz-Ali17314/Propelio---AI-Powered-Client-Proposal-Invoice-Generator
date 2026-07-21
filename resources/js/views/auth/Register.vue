@@ -39,7 +39,7 @@ async function handleSubmit() {
         <div class="w-full max-w-md bg-slate-900/80 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-xl relative z-10">
             <!-- Brand Logo Header -->
             <div class="text-center mb-6">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-purple-500 flex items-center justify-center text-white font-extrabold text-2xl mx-auto shadow-lg shadow-indigo-500/30 ring-1 ring-white/20 mb-3">
+                <div class="w-12 h-12 rounded-2xl bg-linear-to-tr from-indigo-600 via-violet-600 to-purple-500 flex items-center justify-center text-white font-extrabold text-2xl mx-auto shadow-lg shadow-indigo-500/30 ring-1 ring-white/20 mb-3">
                     P
                 </div>
                 <h1 class="text-2xl font-extrabold tracking-tight text-white">Create Propelio Account</h1>
@@ -96,7 +96,7 @@ async function handleSubmit() {
                 <button
                     type="submit"
                     :disabled="authStore.isLoading"
-                    class="w-full bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl shadow-lg shadow-indigo-600/30 transition-all duration-200 active:scale-[0.99] ring-1 ring-white/20 mt-2"
+                    class="w-full bg-linear-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl shadow-lg shadow-indigo-600/30 transition-all duration-200 active:scale-[0.99] ring-1 ring-white/20 mt-2"
                 >
                     {{ authStore.isLoading ? 'Creating account...' : 'Create Account →' }}
                 </button>
@@ -110,4 +110,4 @@ async function handleSubmit() {
             </div>
         </div>
     </div>
-</template>
+</template>

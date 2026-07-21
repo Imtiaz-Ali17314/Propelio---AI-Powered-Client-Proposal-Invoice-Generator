@@ -41,12 +41,12 @@ const userInitials = computed(() => {
             <!-- Brand Logo -->
             <div class="p-6 flex items-center justify-between border-b border-slate-800/60">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-purple-500 flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-indigo-500/30 ring-1 ring-white/20">
+                    <div class="w-10 h-10 rounded-xl bg-linear-to-tr from-indigo-600 via-violet-600 to-purple-500 flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-indigo-500/30 ring-1 ring-white/20">
                         P
                     </div>
                     <div>
                         <div class="flex items-center gap-1.5">
-                            <span class="text-lg font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">Propelio</span>
+                            <span class="text-lg font-bold tracking-tight bg-linear-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">Propelio</span>
                             <span class="px-1.5 py-0.5 text-[10px] font-bold tracking-wider uppercase bg-indigo-500/20 text-indigo-400 rounded ring-1 ring-indigo-500/30">AI</span>
                         </div>
                         <p class="text-[11px] text-slate-400 font-medium">Proposal & Invoice Engine</p>

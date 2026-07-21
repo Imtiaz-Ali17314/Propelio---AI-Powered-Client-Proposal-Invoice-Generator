@@ -42,7 +42,7 @@
                             class="flex-1 h-1 mx-2 rounded-full transition-colors duration-300"
                             :class="
                                 isStepCompleted(step.key)
-                                    ? 'bg-gradient-to-r from-indigo-500 to-violet-500 shadow-sm shadow-indigo-500/50'
+                                    ? 'bg-linear-to-r from-indigo-500 to-violet-500 shadow-sm shadow-indigo-500/50'
                                     : 'bg-slate-800'
                             "
                         ></div>
@@ -264,4 +264,4 @@ watch(
     () => route.params.id,
     () => initWizard(),
 );
-</script>
+</script>

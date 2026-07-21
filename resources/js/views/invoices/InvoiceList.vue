@@ -8,7 +8,7 @@
         </div>
         <router-link
           to="/invoices/create"
-          class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-500/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ring-1 ring-white/20 self-start sm:self-auto"
+          class="inline-flex items-center gap-2 bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-500/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ring-1 ring-white/20 self-start sm:self-auto"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
           <span>New Invoice</span>
@@ -33,7 +33,7 @@
 
       <div v-else class="bg-slate-900/80 border border-slate-800/80 rounded-2xl overflow-hidden backdrop-blur-xl shadow-xl">
         <div class="overflow-x-auto">
-          <table class="w-full text-sm min-w-[640px]">
+          <table class="w-full text-sm min-w-160">
             <thead class="bg-slate-950/60 text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-800/80">
               <tr>
                 <th class="text-left px-6 py-4">Invoice #</th>
@@ -101,4 +101,4 @@ async function handleDelete(id) {
   if (!confirm('Delete this invoice? This cannot be undone.')) return
   await store.remove(id)
 }
-</script>
+</script>

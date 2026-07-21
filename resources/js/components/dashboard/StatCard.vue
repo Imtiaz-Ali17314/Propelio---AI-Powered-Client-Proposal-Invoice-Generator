@@ -7,7 +7,7 @@
 
         <div class="min-w-0 z-10">
             <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">{{ label }}</p>
-            <p class="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent truncate">
+            <p class="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight bg-linear-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent truncate">
                 {{ value }}
             </p>
             <p v-if="subtext" class="mt-2 text-xs font-medium text-slate-400 flex items-center gap-1.5 truncate">

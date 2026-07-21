@@ -33,7 +33,7 @@
                         Edit
                     </button>
                     <button
-                        class="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ring-1 ring-white/20"
+                        class="inline-flex items-center gap-2 px-4 py-2.5 bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ring-1 ring-white/20"
                         @click="store.downloadPdf(invoice.id)"
                     >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -46,7 +46,7 @@
             <div class="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-5 sm:p-6 backdrop-blur-xl grid grid-cols-2 sm:grid-cols-4 gap-5">
                 <div>
                     <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Total</p>
-                    <p class="text-xl font-extrabold bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent tabular-nums">
+                    <p class="text-xl font-extrabold bg-linear-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent tabular-nums">
                         ${{ formatMoney(invoice.total) }}
                     </p>
                 </div>
@@ -73,7 +73,7 @@
             <!-- Line Items Table -->
             <div class="bg-slate-900/80 border border-slate-800/80 rounded-2xl overflow-hidden backdrop-blur-xl">
                 <div class="overflow-x-auto">
-                <table class="w-full text-sm min-w-[500px]">
+                <table class="w-full text-sm min-w-125">
                     <thead>
                         <tr class="border-b border-slate-800/60">
                             <th class="text-left px-5 py-3.5 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Description</th>
@@ -112,7 +112,7 @@
                         </div>
                         <div class="flex justify-between font-bold text-white pt-2.5 border-t border-slate-700/50">
                             <span>Total</span>
-                            <span class="text-lg bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent tabular-nums">${{ formatMoney(invoice.total) }}</span>
+                            <span class="text-lg bg-linear-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent tabular-nums">${{ formatMoney(invoice.total) }}</span>
                         </div>
                     </div>
                 </div>

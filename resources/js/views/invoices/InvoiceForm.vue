@@ -66,7 +66,7 @@
                                 v-model="form.issued_date"
                                 type="date"
                                 required
-                                class="w-full bg-slate-950/80 border border-slate-700/60 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-200 [color-scheme:dark]"
+                                class="w-full bg-slate-950/80 border border-slate-700/60 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-200 scheme:dark"
                             />
                         </div>
                         <div>
@@ -75,7 +75,7 @@
                                 v-model="form.due_date"
                                 type="date"
                                 required
-                                class="w-full bg-slate-950/80 border border-slate-700/60 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-200 [color-scheme:dark]"
+                                class="w-full bg-slate-950/80 border border-slate-700/60 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-200 scheme:dark"
                             />
                         </div>
                     </div>
@@ -99,7 +99,7 @@
                     </div>
 
                     <!-- Column headers -->
-                    <div class="grid grid-cols-12 gap-2 mb-2 px-1 hidden sm:grid">
+                    <div class="grid grid-cols-12 gap-2 mb-2 px-1 sm:grid">
                         <span class="col-span-6 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Description</span>
                         <span class="col-span-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Qty</span>
                         <span class="col-span-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Rate</span>
@@ -164,7 +164,7 @@
                             </div>
                             <div class="flex justify-between font-bold text-white pt-2.5 border-t border-slate-700/50">
                                 <span>Total</span>
-                                <span class="text-lg bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent tabular-nums">${{ formatMoney(total) }}</span>
+                                <span class="text-lg bg-linear-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent tabular-nums">${{ formatMoney(total) }}</span>
                             </div>
                         </div>
                     </div>
@@ -196,7 +196,7 @@
                     <button
                         type="submit"
                         :disabled="store.saving"
-                        class="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ring-1 ring-white/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                        class="inline-flex items-center gap-2 px-6 py-2.5 bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ring-1 ring-white/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                     >
                         <svg v-if="store.saving" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
                         <span>{{

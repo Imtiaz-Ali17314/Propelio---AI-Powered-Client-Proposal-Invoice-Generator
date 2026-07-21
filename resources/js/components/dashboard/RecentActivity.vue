@@ -10,7 +10,7 @@
                     class="px-3 py-1.5 rounded-lg transition-all duration-200"
                     :class="
                         tab === 'proposals'
-                            ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30'
+                            ? 'bg-linear-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30'
                             : 'text-slate-400 hover:text-slate-200'
                     "
                     @click="tab = 'proposals'"
@@ -22,7 +22,7 @@
                     class="px-3 py-1.5 rounded-lg transition-all duration-200"
                     :class="
                         tab === 'invoices'
-                            ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30'
+                            ? 'bg-linear-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30'
                             : 'text-slate-400 hover:text-slate-200'
                     "
                     @click="tab = 'invoices'"

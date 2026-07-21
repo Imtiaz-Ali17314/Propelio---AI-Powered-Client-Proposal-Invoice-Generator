@@ -75,7 +75,7 @@
             <button
                 type="submit"
                 :disabled="submitting || !form.brief || form.brief.length < 20"
-                class="w-full bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all duration-200 active:scale-[0.99] ring-1 ring-white/20"
+                class="w-full bg-linear-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all duration-200 active:scale-[0.99] ring-1 ring-white/20"
             >
                 {{ submitting ? "Creating..." : "Continue to AI Scope Generation →" }}
             </button>
@@ -133,4 +133,4 @@ async function handleSubmit() {
         submitting.value = false;
     }
 }
-</script>
+</script>
