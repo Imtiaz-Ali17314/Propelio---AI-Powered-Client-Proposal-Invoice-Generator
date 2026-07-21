@@ -1,32 +1,38 @@
 <template>
   <AppLayout>
-    <div class="max-w-6xl mx-auto py-8 px-4">
-      <div class="flex items-center justify-between mb-6">
+    <div class="max-w-6xl mx-auto py-6 px-2 sm:px-4">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
-          <h1 class="text-2xl font-semibold text-gray-900">Proposals</h1>
-          <p class="text-sm text-gray-500 mt-1">AI-generated client proposals — manage aur track karo.</p>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Proposals Hub</h1>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">Manage, edit, and convert AI-generated proposals for your clients.</p>
         </div>
         <router-link
           :to="{ name: 'proposals.new' }"
-          class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-5 py-2.5 rounded-lg transition-colors flex items-center gap-2"
+          class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-500/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ring-1 ring-white/20 self-start sm:self-auto"
         >
-          <span>✨</span> New Proposal
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          <span>New Proposal</span>
         </router-link>
       </div>
 
       <!-- Loading -->
-      <div v-if="store.loading && store.proposals.length === 0" class="text-center py-16 text-gray-400">
-        Loading proposals...
+      <div v-if="store.loading && store.proposals.length === 0" class="space-y-4">
+        <div v-for="n in 3" :key="n" class="h-20 bg-slate-900/50 border border-slate-800/50 rounded-2xl animate-pulse shimmer-ai"></div>
       </div>
 
       <!-- Empty state -->
       <div
         v-else-if="!store.loading && store.proposals.length === 0"
-        class="text-center py-16 bg-white rounded-xl border border-dashed border-gray-200"
+        class="text-center py-16 bg-slate-900/80 rounded-2xl border border-dashed border-slate-800 backdrop-blur-xl p-8"
       >
-        <p class="text-gray-500 mb-4">Abhi tak koi proposal nahi banayi.</p>
-        <router-link :to="{ name: 'proposals.new' }" class="text-indigo-600 hover:text-indigo-700 font-medium">
-          Pehli proposal banao →
+        <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-2xl mx-auto mb-4 ring-1 ring-indigo-500/20">
+          📋
+        </div>
+        <h3 class="text-lg font-bold text-slate-200 mb-1">No proposals yet</h3>
+        <p class="text-slate-400 text-sm mb-6 max-w-sm mx-auto">Generate your first AI proposal with automated scope, timeline, and pricing breakdown.</p>
+        <router-link :to="{ name: 'proposals.new' }" class="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-semibold text-sm">
+          <span>Create Proposal Now</span>
+          <span>→</span>
         </router-link>
       </div>
 
@@ -35,36 +41,37 @@
         <div
           v-for="proposal in store.proposals"
           :key="proposal.id"
-          class="bg-white border border-gray-100 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 hover:shadow-sm transition-shadow"
+          class="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 backdrop-blur-xl hover:border-slate-700/80 transition-all duration-200 hover:shadow-xl hover:shadow-indigo-500/5 group"
         >
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-3 mb-1">
-              <h3 class="font-medium text-gray-900 truncate">{{ proposal.title }}</h3>
-              <span class="text-xs font-medium px-2.5 py-0.5 rounded-full shrink-0" :class="statusBadgeClass(proposal.status)">
+            <div class="flex flex-wrap items-center gap-2.5 mb-1.5">
+              <h3 class="font-bold text-slate-100 group-hover:text-indigo-300 transition-colors truncate text-base">{{ proposal.title }}</h3>
+              <span class="text-[11px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wider shrink-0 ring-1" :class="statusBadgeClass(proposal.status)">
                 {{ proposal.status }}
               </span>
               <span
                 v-if="proposal.generation_step !== 'completed'"
-                class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-600 shrink-0"
+                class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/30 shrink-0"
               >
-                Draft in progress
+                In Progress ({{ proposal.generation_step }})
               </span>
             </div>
-            <p class="text-sm text-gray-500">
-              {{ proposal.client?.name || 'Unknown client' }}
-              <span v-if="proposal.total_amount > 0"> · {{ formatCurrency(proposal.total_amount) }}</span>
+            <p class="text-xs font-medium text-slate-400 flex items-center gap-2">
+              <span class="text-slate-300">{{ proposal.client?.name || 'Unassigned Client' }}</span>
+              <span v-if="proposal.total_amount > 0" class="text-slate-500">·</span>
+              <span v-if="proposal.total_amount > 0" class="text-emerald-400 font-bold">{{ formatCurrency(proposal.total_amount) }}</span>
             </p>
           </div>
 
-          <div class="flex items-center gap-2 shrink-0 sm:ml-4">
+          <div class="flex items-center gap-3 shrink-0">
             <router-link
               :to="{ name: 'proposals.wizard', params: { id: proposal.id } }"
-              class="text-sm text-indigo-600 hover:text-indigo-700 font-medium px-3 py-1.5"
+              class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-semibold text-xs transition-colors ring-1 ring-slate-700"
             >
-              {{ proposal.generation_step === 'completed' ? 'View' : 'Continue' }}
+              {{ proposal.generation_step === 'completed' ? 'View Details' : 'Continue Wizard' }}
             </router-link>
-            <button @click="confirmDelete(proposal)" class="text-sm text-red-400 hover:text-red-600 px-3 py-1.5">
-              Delete
+            <button @click="confirmDelete(proposal)" class="p-2 rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" title="Delete Proposal">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
             </button>
           </div>
         </div>
@@ -88,12 +95,12 @@ onMounted(() => {
 
 function statusBadgeClass(status) {
   const map = {
-    draft: 'bg-gray-100 text-gray-600',
-    sent: 'bg-blue-50 text-blue-600',
-    accepted: 'bg-emerald-50 text-emerald-600',
-    rejected: 'bg-red-50 text-red-600',
+    draft: 'bg-slate-800 text-slate-400 ring-slate-700',
+    sent: 'bg-blue-500/10 text-blue-400 ring-blue-500/30',
+    accepted: 'bg-emerald-500/10 text-emerald-400 ring-emerald-500/30',
+    rejected: 'bg-rose-500/10 text-rose-400 ring-rose-500/30',
   }
-  return map[status] || 'bg-gray-100 text-gray-600'
+  return map[status] || 'bg-slate-800 text-slate-400 ring-slate-700'
 }
 
 function formatCurrency(amount) {
@@ -109,4 +116,4 @@ async function confirmDelete(proposal) {
     toast.error(store.error || 'Failed to delete proposal.')
   }
 }
-</script>
+</script>

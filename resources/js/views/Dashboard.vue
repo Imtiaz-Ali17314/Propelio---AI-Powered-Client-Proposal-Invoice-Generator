@@ -38,13 +38,26 @@ const invoicesSubtext = computed(() => {
 
 <template>
     <AppLayout>
-        <div class="mb-6">
-            <h2 class="text-2xl font-bold text-gray-800 mb-1">
-                Welcome back, {{ authStore.user?.name }} 👋
-            </h2>
-            <p class="text-gray-500 text-sm">
-                Here's how your agency is doing.
-            </p>
+        <!-- Header Banner -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-2">
+                    <span>Welcome back, {{ authStore.user?.name }}</span>
+                    <span class="animate-bounce">👋</span>
+                </h2>
+                <p class="text-slate-400 text-sm mt-1">
+                    Here is an overview of your agency's proposals, cash flow, and client invoices.
+                </p>
+            </div>
+            <div>
+                <router-link
+                    :to="{ name: 'proposals.new' }"
+                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold text-sm shadow-lg shadow-indigo-500/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ring-1 ring-white/20"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    <span>New Proposal Wizard</span>
+                </router-link>
+            </div>
         </div>
 
         <!-- Loading state -->
@@ -53,51 +66,54 @@ const invoicesSubtext = computed(() => {
                 <div
                     v-for="n in 4"
                     :key="n"
-                    class="h-28 rounded-xl bg-gray-100 animate-pulse"
+                    class="h-32 rounded-2xl bg-slate-900/50 border border-slate-800/50 animate-pulse shimmer-ai"
                 ></div>
             </div>
-            <div class="h-64 rounded-xl bg-gray-100 animate-pulse"></div>
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                <div class="lg:col-span-3 h-72 rounded-2xl bg-slate-900/50 border border-slate-800/50 animate-pulse"></div>
+                <div class="lg:col-span-2 h-72 rounded-2xl bg-slate-900/50 border border-slate-800/50 animate-pulse"></div>
+            </div>
         </div>
 
         <!-- Error state -->
         <div
             v-else-if="dashboardStore.error"
-            class="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 text-sm"
+            class="bg-rose-500/10 border border-rose-500/30 text-rose-400 rounded-2xl p-4 text-sm"
         >
             {{ dashboardStore.error }}
         </div>
 
-        <!-- Content -->
-        <div v-else-if="stats" class="space-y-6">
+        <!-- Dashboard Content -->
+        <div v-else-if="stats" class="space-y-8">
             <!-- Stat cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard
                     label="Total Revenue"
                     :value="currency(stats.total_revenue)"
                     subtext="Collected from payments"
-                    icon="💰"
-                    icon-bg="bg-emerald-50"
+                    icon="💵"
+                    icon-bg="bg-emerald-500/20 text-emerald-300 ring-emerald-500/30"
                 />
                 <StatCard
                     label="Pending Amount"
                     :value="currency(stats.pending_amount)"
-                    subtext="Outstanding across unpaid invoices"
+                    subtext="Outstanding across invoices"
                     icon="⏳"
-                    icon-bg="bg-amber-50"
+                    icon-bg="bg-amber-500/20 text-amber-300 ring-amber-500/30"
                 />
                 <StatCard
                     label="Proposals"
                     :value="stats.proposals.total"
                     :subtext="proposalsSubtext"
                     icon="📋"
-                    icon-bg="bg-indigo-50"
+                    icon-bg="bg-indigo-500/20 text-indigo-300 ring-indigo-500/30"
                 />
                 <StatCard
                     label="Invoices"
                     :value="stats.invoices.total"
                     :subtext="invoicesSubtext"
                     icon="🧾"
-                    icon-bg="bg-blue-50"
+                    icon-bg="bg-violet-500/20 text-violet-300 ring-violet-500/30"
                 />
             </div>
 
@@ -116,3 +132,4 @@ const invoicesSubtext = computed(() => {
         </div>
     </AppLayout>
 </template>
+

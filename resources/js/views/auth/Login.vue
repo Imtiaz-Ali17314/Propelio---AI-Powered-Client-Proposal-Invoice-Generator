@@ -25,44 +25,59 @@ async function handleSubmit() {
 </script>
 
 <template>
-    <div class="min-h-screen flex items-center justify-center bg-gray-50">
-        <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-md">
-            <h1 class="text-2xl font-bold mb-6 text-gray-800">Login to Propelio</h1>
+    <div class="min-h-screen flex items-center justify-center bg-slate-950 text-slate-100 p-4 font-sans relative overflow-hidden selection:bg-indigo-500 selection:text-white">
+        <!-- Ambient Background Glows -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-violet-600/15 rounded-full blur-3xl pointer-events-none"></div>
 
-            <form @submit.prevent="handleSubmit" class="space-y-4">
+        <div class="w-full max-w-md bg-slate-900/80 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-xl relative z-10">
+            <!-- Brand Logo Header -->
+            <div class="text-center mb-8">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-purple-500 flex items-center justify-center text-white font-extrabold text-2xl mx-auto shadow-lg shadow-indigo-500/30 ring-1 ring-white/20 mb-3">
+                    P
+                </div>
+                <h1 class="text-2xl font-extrabold tracking-tight text-white">Welcome back to Propelio</h1>
+                <p class="text-slate-400 text-xs mt-1">Sign in to your AI Proposal & Invoice engine</p>
+            </div>
+
+            <form @submit.prevent="handleSubmit" class="space-y-5">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Email Address</label>
                     <input
                         v-model="form.email"
                         type="email"
                         required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        placeholder="you@agency.com"
+                        class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                     />
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Password</label>
                     <input
                         v-model="form.password"
                         type="password"
                         required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        placeholder="••••••••"
+                        class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                     />
                 </div>
 
                 <button
                     type="submit"
                     :disabled="authStore.isLoading"
-                    class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
+                    class="w-full bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 disabled:opacity-50 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all duration-200 active:scale-[0.99] ring-1 ring-white/20"
                 >
-                    {{ authStore.isLoading ? 'Logging in...' : 'Login' }}
+                    {{ authStore.isLoading ? 'Authenticating...' : 'Sign In →' }}
                 </button>
             </form>
 
-            <p class="text-sm text-gray-600 mt-4">
-                Don't have an account?
-                <router-link :to="{ name: 'register' }" class="text-indigo-600 font-medium">Register</router-link>
-            </p>
+            <div class="mt-6 text-center pt-6 border-t border-slate-800/80">
+                <p class="text-xs text-slate-400">
+                    Don't have an account?
+                    <router-link :to="{ name: 'register' }" class="text-indigo-400 font-bold hover:text-indigo-300 ml-1">Create Account</router-link>
+                </p>
+            </div>
         </div>
     </div>
-</template>
+</template>

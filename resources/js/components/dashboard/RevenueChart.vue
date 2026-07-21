@@ -1,8 +1,16 @@
 <template>
-    <div class="bg-white rounded-xl border border-gray-200 p-5">
-        <h3 class="text-sm font-semibold text-gray-700 mb-4">
-            Revenue — Last 6 Months
-        </h3>
+    <div class="bg-slate-900/80 rounded-2xl border border-slate-800/80 p-6 backdrop-blur-xl">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h3 class="text-base font-bold text-slate-100">
+                    Revenue Trend
+                </h3>
+                <p class="text-xs text-slate-400">Monthly cash collected over the last 6 months</p>
+            </div>
+            <div class="px-2.5 py-1 rounded-lg bg-indigo-500/10 text-indigo-400 text-xs font-semibold ring-1 ring-indigo-500/20">
+                Cash Flow
+            </div>
+        </div>
         <div class="h-64">
             <canvas ref="canvasEl"></canvas>
         </div>
@@ -20,15 +28,12 @@ import {
     Tooltip,
 } from "chart.js";
 
-// Chart.js is "tree-shakeable" — har chart type/scale/plugin ko manually
-// register karna parta hai, warna canvas blank rehta hai. Ye registration
-// sirf ek dafa hone ki zaroorat hai (module load ke waqt).
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip);
 
 const props = defineProps({
     data: {
         type: Array,
-        default: () => [], // [{ label: 'Jan 2026', total: 1200 }, ...]
+        default: () => [],
     },
 });
 
@@ -56,6 +61,11 @@ function renderChart() {
         return;
     }
 
+    const ctx = canvasEl.value.getContext("2d");
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, "rgba(99, 102, 241, 0.85)");
+    gradient.addColorStop(1, "rgba(139, 92, 246, 0.3)");
+
     chartInstance = new Chart(canvasEl.value, {
         type: "bar",
         data: {
@@ -64,9 +74,11 @@ function renderChart() {
                 {
                     label: "Revenue",
                     data: totals,
-                    backgroundColor: "rgba(99, 102, 241, 0.8)", // indigo-500
-                    borderRadius: 6,
-                    maxBarThickness: 48,
+                    backgroundColor: gradient,
+                    borderColor: "rgba(129, 140, 248, 0.8)",
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    maxBarThickness: 42,
                 },
             ],
         },
@@ -76,6 +88,13 @@ function renderChart() {
             plugins: {
                 legend: { display: false },
                 tooltip: {
+                    backgroundColor: "rgba(15, 23, 42, 0.95)",
+                    titleColor: "#f8fafc",
+                    bodyColor: "#818cf8",
+                    borderColor: "rgba(255, 255, 255, 0.1)",
+                    borderWidth: 1,
+                    padding: 12,
+                    cornerRadius: 8,
                     callbacks: {
                         label: (ctx) => currency(ctx.parsed.y),
                     },
@@ -85,11 +104,17 @@ function renderChart() {
                 y: {
                     beginAtZero: true,
                     ticks: {
+                        color: "#94a3b8",
+                        font: { family: "Plus Jakarta Sans", size: 11 },
                         callback: (value) => currency(value),
                     },
-                    grid: { color: "#f1f5f9" },
+                    grid: { color: "rgba(51, 65, 85, 0.4)" },
                 },
                 x: {
+                    ticks: {
+                        color: "#94a3b8",
+                        font: { family: "Plus Jakarta Sans", size: 11 },
+                    },
                     grid: { display: false },
                 },
             },
@@ -109,3 +134,4 @@ onBeforeUnmount(() => {
     chartInstance?.destroy();
 });
 </script>
+

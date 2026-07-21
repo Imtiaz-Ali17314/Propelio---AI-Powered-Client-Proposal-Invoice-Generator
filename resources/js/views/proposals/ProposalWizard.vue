@@ -1,59 +1,63 @@
 <!-- resources/js/views/proposals/ProposalWizard.vue -->
 <template>
     <AppLayout>
-        <div class="max-w-4xl mx-auto py-8 px-4">
-            <!-- Stepper -->
-            <div class="flex items-center justify-between mb-10">
-                <template v-for="(step, index) in steps" :key="step.key">
-                    <button
-                        @click="goToStep(step.key)"
-                        :disabled="!canNavigateTo(step.key)"
-                        class="flex flex-col items-center gap-1 sm:gap-2 group shrink-0"
-                        :class="
-                            canNavigateTo(step.key)
-                                ? 'cursor-pointer'
-                                : 'cursor-not-allowed opacity-40'
-                        "
-                    >
-                        <div
-                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-semibold text-xs sm:text-sm transition-colors"
-                            :class="stepCircleClass(step.key)"
-                        >
-                            <span v-if="isStepCompleted(step.key)">✓</span>
-                            <span v-else>{{ index + 1 }}</span>
-                        </div>
-                        <span
-                            class="hidden sm:inline text-xs font-medium"
+        <div class="max-w-5xl mx-auto py-6 px-2 sm:px-4">
+            <!-- Stepper Container -->
+            <div class="bg-slate-900/80 rounded-2xl border border-slate-800/80 p-4 sm:p-6 mb-8 backdrop-blur-xl shadow-xl">
+                <div class="flex items-center justify-between">
+                    <template v-for="(step, index) in steps" :key="step.key">
+                        <button
+                            @click="goToStep(step.key)"
+                            :disabled="!canNavigateTo(step.key)"
+                            class="flex flex-col items-center gap-2 group shrink-0 transition-all"
                             :class="
-                                currentStep === step.key
-                                    ? 'text-indigo-600'
-                                    : 'text-gray-500'
+                                canNavigateTo(step.key)
+                                    ? 'cursor-pointer'
+                                    : 'cursor-not-allowed opacity-35'
                             "
                         >
-                            {{ step.label }}
-                        </span>
-                    </button>
+                            <div
+                                class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center font-bold text-xs sm:text-sm transition-all duration-300 shadow-md"
+                                :class="stepCircleClass(step.key)"
+                            >
+                                <span v-if="isStepCompleted(step.key)">✓</span>
+                                <span v-else>{{ index + 1 }}</span>
+                            </div>
+                            <span
+                                class="hidden sm:inline text-xs font-semibold tracking-wide"
+                                :class="
+                                    currentStep === step.key
+                                        ? 'text-indigo-400'
+                                        : isStepCompleted(step.key)
+                                        ? 'text-slate-300'
+                                        : 'text-slate-500'
+                                "
+                            >
+                                {{ step.label }}
+                            </span>
+                        </button>
 
-                    <div
-                        v-if="index < steps.length - 1"
-                        class="flex-1 h-0.5 mx-1 sm:mx-2"
-                        :class="
-                            isStepCompleted(step.key)
-                                ? 'bg-indigo-600'
-                                : 'bg-gray-200'
-                        "
-                    ></div>
-                </template>
+                        <div
+                            v-if="index < steps.length - 1"
+                            class="flex-1 h-1 mx-2 rounded-full transition-colors duration-300"
+                            :class="
+                                isStepCompleted(step.key)
+                                    ? 'bg-gradient-to-r from-indigo-500 to-violet-500 shadow-sm shadow-indigo-500/50'
+                                    : 'bg-slate-800'
+                            "
+                        ></div>
+                    </template>
+                </div>
+
+                <!-- Current step label for mobile -->
+                <div class="sm:hidden text-center text-xs font-bold uppercase tracking-wider text-indigo-400 mt-4 pt-3 border-t border-slate-800">
+                    Step {{ steps.findIndex((s) => s.key === currentStep) + 1 }}: {{ steps.find((s) => s.key === currentStep)?.label }}
+                </div>
             </div>
 
-            <!-- Current step label (mobile only, since the stepper labels are hidden below sm) -->
-            <p class="sm:hidden text-center text-sm font-medium text-indigo-600 -mt-6 mb-8">
-                {{ steps.find((s) => s.key === currentStep)?.label }}
-            </p>
-
-            <!-- Step Content -->
+            <!-- Step Content Card -->
             <div
-                class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8"
+                class="bg-slate-900/80 rounded-2xl shadow-2xl border border-slate-800/80 p-6 sm:p-8 md:p-10 backdrop-blur-xl"
             >
                 <BriefStep
                     v-if="currentStep === 'brief'"
@@ -121,14 +125,13 @@ const steps = [
     { key: "brief", label: "Brief" },
     { key: "scope", label: "Scope" },
     { key: "timeline", label: "Timeline" },
-    { key: "cost", label: "Cost" },
-    { key: "review", label: "Review" },
+    { key: "cost", label: "Cost Breakdown" },
+    { key: "review", label: "Final Review" },
 ];
 
 const currentStep = ref("brief");
 const proposal = computed(() => store.currentProposal);
 
-// generation_step order map — kis step tak pahunch chuke hain
 const stepOrder = ["brief", "scope", "timeline", "cost", "completed"];
 
 function isStepCompleted(stepKey) {
@@ -144,7 +147,6 @@ function isStepCompleted(stepKey) {
 function canNavigateTo(stepKey) {
     if (stepKey === "brief") return true;
     if (!proposal.value) return false;
-    // User sirf un steps pe ja sakta hai jo already generate ho chuke hain, ya jo current hai
     const currentIndex = stepOrder.indexOf(proposal.value.generation_step);
     const targetIndex = stepOrder.indexOf(
         stepKey === "review" ? "completed" : stepKey,
@@ -153,10 +155,10 @@ function canNavigateTo(stepKey) {
 }
 
 function stepCircleClass(stepKey) {
-    if (isStepCompleted(stepKey)) return "bg-indigo-600 text-white";
+    if (isStepCompleted(stepKey)) return "bg-emerald-500 text-slate-950 font-bold ring-2 ring-emerald-400/50 shadow-emerald-500/20";
     if (currentStep.value === stepKey)
-        return "bg-indigo-100 text-indigo-600 ring-2 ring-indigo-600";
-    return "bg-gray-100 text-gray-400";
+        return "bg-gradient-to-tr from-indigo-600 to-violet-600 text-white ring-4 ring-indigo-500/30 shadow-indigo-500/40";
+    return "bg-slate-800 text-slate-500 ring-1 ring-slate-700";
 }
 
 function goToStep(stepKey) {
@@ -166,7 +168,6 @@ function goToStep(stepKey) {
 async function handleBriefCreated(newProposal) {
     toast.success("Proposal created — let's generate the scope.");
     currentStep.value = "scope";
-    // Router URL update kar do taake refresh pe proposal load ho sake
     router.replace({
         name: "proposals.wizard",
         params: { id: newProposal.id },
@@ -242,7 +243,6 @@ async function handleFinish() {
 async function initWizard() {
     if (route.params.id) {
         const loaded = await store.fetchProposal(route.params.id);
-        // Existing proposal resume karo uske generation_step ke hisaab se
         const map = {
             brief: "brief",
             scope: "scope",
@@ -252,13 +252,6 @@ async function initWizard() {
         };
         currentStep.value = map[loaded.generation_step] || "brief";
     } else {
-        // "New Proposal" — purani proposal ka state (Pinia store) clear karo,
-        // warna Vue Router isi component instance ko reuse karta hai (kyunke
-        // /proposals/new aur /proposals/:id dono ek hi component render karte
-        // hain) aur purani proposal ka data reh jata hai — Brief null aane ki
-        // bajaye, baaki steps purane data se pre-filled dikhte the aur stepper
-        // bhi purane generation_step ke hisaab se sab "completed" dikha raha
-        // tha. Fresh start ke liye store aur local step dono reset karna zaroori hai.
         store.currentProposal = null;
         store.error = null;
         currentStep.value = "brief";
@@ -267,10 +260,8 @@ async function initWizard() {
 
 onMounted(initWizard);
 
-// route.params.id badalne par bhi wizard re-init ho (jab Vue Router same
-// component instance reuse karta hai aur onMounted dobara nahi chalta).
 watch(
     () => route.params.id,
     () => initWizard(),
 );
-</script>
+</script>
