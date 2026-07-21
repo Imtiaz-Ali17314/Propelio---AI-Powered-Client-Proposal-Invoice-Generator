@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-slate-900/80 rounded-2xl border border-slate-800/80 p-6 backdrop-blur-xl h-full flex flex-col min-h-[350px] max-h-[370px]">
+    <div class="bg-slate-900/80 rounded-2xl border border-slate-800/80 p-6 backdrop-blur-xl h-full flex flex-col min-h-87.5 max-h-92.5">
         <div class="flex items-center justify-between mb-4 shrink-0">
             <div>
                 <h3 class="text-base font-bold text-slate-100">
