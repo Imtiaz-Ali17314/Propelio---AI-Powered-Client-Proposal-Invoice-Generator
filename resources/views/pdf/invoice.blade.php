@@ -13,11 +13,6 @@
             line-height: 1.5;
         }
 
-        .header {
-            display: flex;
-            width: 100%;
-        }
-
         .header-table {
             width: 100%;
             border-collapse: collapse;
@@ -28,16 +23,22 @@
             vertical-align: top;
         }
 
-        .logo-box {
-            width: 56px;
-            height: 56px;
-            background-color: #4f46e5;
-            border-radius: 8px;
+        .logo-table {
+            border-collapse: collapse;
+        }
+
+        .logo-letter {
+            width: 66px; 
+            height: 56px; 
+            background-color: #4f46e5; 
+            border-radius: 10px; 
+            -webkit-border-radius: 10px; 
+            text-align: center; 
+            vertical-align: middle; 
+            padding-bottom: 10px; 
+            font-size: 26px; 
+            font-weight: bold; 
             color: #ffffff;
-            text-align: center;
-            font-size: 22px;
-            font-weight: bold;
-            line-height: 56px;
         }
 
         .agency-name {
@@ -66,22 +67,19 @@
             margin-top: 4px;
         }
 
-        .status-badge {
-            display: inline-block;
+        .status-table {
+            margin-left: auto; 
+            border-collapse: collapse; 
             margin-top: 8px;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
-        .status-paid { background-color: #d1fae5; color: #065f46; }
-        .status-unpaid { background-color: #fef3c7; color: #92400e; }
-        .status-partially_paid { background-color: #dbeafe; color: #1e40af; }
-        .status-overdue { background-color: #fee2e2; color: #991b1b; }
-        .status-cancelled { background-color: #e5e7eb; color: #374151; }
+        .status-cell {
+            padding: 4px 12px; 
+            font-size: 10px; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+        }
 
         .divider {
             border-top: 2px solid #e5e7eb;
@@ -208,19 +206,40 @@
 </head>
 <body>
 
+    @php
+        $statusColors = [
+            'paid' => ['bg' => '#d1fae5', 'text' => '#065f46'],
+            'unpaid' => ['bg' => '#fef3c7', 'text' => '#92400e'],
+            'partially_paid' => ['bg' => '#dbeafe', 'text' => '#1e40af'],
+            'overdue' => ['bg' => '#fee2e2', 'text' => '#991b1b'],
+            'cancelled' => ['bg' => '#e5e7eb', 'text' => '#374151'],
+        ];
+        $statusColor = $statusColors[$invoice->status] ?? $statusColors['unpaid'];
+    @endphp
+
     <table class="header-table">
         <tr>
             <td class="logo-cell">
-                <div class="logo-box">{{ strtoupper(substr($invoice->user->name ?? 'A', 0, 1)) }}</div>
+                <table class="logo-table">
+                    <tr>
+                        <td class="logo-letter">
+                            {{ strtoupper(substr($invoice->user->name ?? 'A', 0, 1)) }}
+                        </td>
+                    </tr>
+                </table>
                 <div class="agency-name">{{ $invoice->user->name ?? 'Your Agency' }}</div>
                 <div class="value">{{ $invoice->user->email ?? '' }}</div>
             </td>
             <td class="meta-cell">
                 <div class="invoice-title">INVOICE</div>
                 <div class="invoice-number">{{ $invoice->invoice_number }}</div>
-                <div class="status-badge status-{{ $invoice->status }}">
-                    {{ str_replace('_', ' ', $invoice->status) }}
-                </div>
+                <table class="status-table">
+                    <tr>
+                        <td class="status-cell" style="background-color: {{ $statusColor['bg'] }}; color: {{ $statusColor['text'] }};">
+                            {{ str_replace('_', ' ', $invoice->status) }}
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
     </table>
@@ -290,14 +309,14 @@
                         <td class="t-label">Total</td>
                         <td class="t-value">${{ number_format($invoice->total, 2) }}</td>
                     </tr>
-                    @if($invoice->paidAmount > 0)
+                    @if($invoice->paid_amount > 0)
                         <tr>
                             <td class="t-label">Paid</td>
-                            <td class="t-value">${{ number_format($invoice->paidAmount, 2) }}</td>
+                            <td class="t-value">${{ number_format($invoice->paid_amount, 2) }}</td>
                         </tr>
                         <tr class="balance-due">
                             <td class="t-label">Balance Due</td>
-                            <td class="t-value">${{ number_format($invoice->balanceDue, 2) }}</td>
+                            <td class="t-value">${{ number_format($invoice->balance_due, 2) }}</td>
                         </tr>
                     @endif
                 </table>

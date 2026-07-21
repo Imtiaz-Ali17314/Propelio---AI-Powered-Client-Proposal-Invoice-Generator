@@ -4,11 +4,11 @@ namespace App\Services;
 
 use App\Models\Invoice;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Http\Response;
 
 class InvoicePdfService
 {
-    public function stream(Invoice $invoice): StreamedResponse
+    public function stream(Invoice $invoice): Response
     {
         $pdf = Pdf::loadView('pdf.invoice', [
             'invoice' => $invoice,

@@ -131,63 +131,94 @@
                 </div>
             </section>
         </div>
-
-        <div class="flex justify-between pt-8 mt-8 border-t border-gray-100">
-            <button
-                @click="$emit('back')"
-                class="text-gray-500 hover:text-gray-700 font-medium px-4 py-2.5"
+        <div class="pt-8 mt-8 border-t border-gray-100">
+            <div
+                v-if="proposal.invoices_count > 0"
+                class="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-4"
             >
-                ← Back to edit
-            </button>
-            <div class="flex gap-3">
-                <button
-                    class="border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium px-5 py-2.5 rounded-lg transition-colors"
-                    disabled
-                    title="Coming in the next step — PDF export"
-                >
-                    📄 Export PDF
-                </button>
-                <div
-                    v-if="proposal.invoices_count > 0"
-                    class="text-xs text-amber-600 mb-2"
-                >
+                <span>⚠️</span>
+                <span>
                     This proposal already has
-                    {{ proposal.invoices_count }} invoice(s).
-                </div>
+                    <strong>{{ proposal.invoices_count }}</strong>
+                    invoice{{ proposal.invoices_count > 1 ? "s" : "" }}.
+                </span>
+            </div>
 
+            <div class="flex justify-between items-center">
                 <button
-                    class="px-4 py-2 border border-indigo-600 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-50"
-                    :disabled="converting"
-                    @click="convertToInvoice"
+                    @click="$emit('back')"
+                    class="text-gray-500 hover:text-gray-700 font-medium px-4 py-2.5"
                 >
-                    {{
-                        converting
-                            ? "Converting..."
-                            : proposal.invoices_count > 0
-                              ? "Create Another Invoice"
-                              : "Convert to Invoice"
-                    }}
+                    ← Back to edit
                 </button>
-                <router-link
-                    :to="{ name: 'proposals.list' }"
-                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-5 py-2.5 rounded-lg transition-colors"
-                >
-                    Save & Go to List
-                </router-link>
+                <div class="flex items-center gap-3">
+                    <button
+                        class="border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium px-5 py-2.5 rounded-lg transition-colors"
+                        disabled
+                        title="Coming in the next step — PDF export"
+                    >
+                        📄 Export PDF
+                    </button>
+
+                    <!-- Confirmation state replaces the button inline instead of a native browser popup -->
+                    <div
+                        v-if="confirmingConvert"
+                        class="flex items-center gap-2"
+                    >
+                        <span class="text-xs text-gray-500"
+                            >Create another invoice?</span
+                        >
+                        <button
+                            class="px-3 py-2 border border-gray-300 text-gray-600 rounded-lg text-sm hover:bg-gray-50"
+                            @click="confirmingConvert = false"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700"
+                            :disabled="converting"
+                            @click="convertToInvoice"
+                        >
+                            {{ converting ? "Creating..." : "Yes, Create" }}
+                        </button>
+                    </div>
+
+                    <button
+                        v-else
+                        class="px-4 py-2 border border-indigo-600 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-50"
+                        :disabled="converting"
+                        @click="handleConvertClick"
+                    >
+                        {{
+                            converting
+                                ? "Converting..."
+                                : proposal.invoices_count > 0
+                                  ? "Create Another Invoice"
+                                  : "Convert to Invoice"
+                        }}
+                    </button>
+
+                    <router-link
+                        :to="{ name: 'proposals.list' }"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-5 py-2.5 rounded-lg transition-colors"
+                    >
+                        Save & Go to List
+                    </router-link>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useInvoicesStore } from "@/stores/invoices";
 
 const router = useRouter();
 const invoicesStore = useInvoicesStore();
 const converting = ref(false);
+const confirmingConvert = ref(false);
 
 const props = defineProps({
     proposal: Object,
@@ -200,6 +231,17 @@ const currencySymbol = computed(
     () => currencySymbols[props.proposal?.cost_breakdown?.currency] || "",
 );
 
+function handleConvertClick() {
+    // First invoice for this proposal — go straight through, no friction.
+    if (!props.proposal.invoices_count) {
+        convertToInvoice();
+        return;
+    }
+
+    // Already has invoice(s) — show inline confirmation instead of creating immediately.
+    confirmingConvert.value = true;
+}
+
 async function convertToInvoice() {
     converting.value = true;
     try {
@@ -209,6 +251,7 @@ async function convertToInvoice() {
         router.push(`/invoices/${invoice.id}`);
     } finally {
         converting.value = false;
+        confirmingConvert.value = false;
     }
 }
 </script>

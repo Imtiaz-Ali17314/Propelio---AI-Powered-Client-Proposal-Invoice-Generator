@@ -172,8 +172,29 @@ class InvoiceController extends Controller
     private function generateInvoiceNumber(): string
     {
         $year = now()->year;
-        $count = Invoice::whereYear('created_at', $year)->count() + 1;
+        $prefix = "INV-{$year}-";
 
-        return sprintf('INV-%d-%03d', $year, $count);
+        // Find the highest existing number this year and increment from there —
+        // counting rows breaks once any invoice in between gets deleted.
+        $lastNumber = Invoice::where('invoice_number', 'like', "{$prefix}%")
+            ->orderByDesc('invoice_number')
+            ->value('invoice_number');
+
+        $nextSequence = 1;
+
+        if ($lastNumber) {
+            $lastSequence = (int) substr($lastNumber, strlen($prefix));
+            $nextSequence = $lastSequence + 1;
+        }
+
+        $invoiceNumber = $prefix . sprintf('%03d', $nextSequence);
+
+        // Safety net against any rare race condition.
+        while (Invoice::where('invoice_number', $invoiceNumber)->exists()) {
+            $nextSequence++;
+            $invoiceNumber = $prefix . sprintf('%03d', $nextSequence);
+        }
+
+        return $invoiceNumber;
     }
 }
