@@ -1,6 +1,6 @@
 <template>
-    <div class="bg-slate-900/80 rounded-2xl border border-slate-800/80 p-6 backdrop-blur-xl h-full flex flex-col">
-        <div class="flex items-center justify-between mb-5">
+    <div class="bg-slate-900/80 rounded-2xl border border-slate-800/80 p-6 backdrop-blur-xl h-full flex flex-col min-h-[350px] max-h-[370px]">
+        <div class="flex items-center justify-between mb-4 shrink-0">
             <h3 class="text-base font-bold text-slate-100">
                 Recent Activity
             </h3>
@@ -33,7 +33,7 @@
         </div>
 
         <!-- Proposals tab -->
-        <ul v-if="tab === 'proposals'" class="divide-y divide-slate-800/60 flex-1 overflow-y-auto">
+        <ul v-if="tab === 'proposals'" class="divide-y divide-slate-800/60 flex-1 overflow-y-auto no-scrollbar">
             <li
                 v-for="proposal in proposals"
                 :key="proposal.id"
@@ -71,7 +71,7 @@
         </ul>
 
         <!-- Invoices tab -->
-        <ul v-else class="divide-y divide-slate-800/60 flex-1 overflow-y-auto">
+        <ul v-else class="divide-y divide-slate-800/60 flex-1 overflow-y-auto no-scrollbar">
             <li
                 v-for="invoice in invoices"
                 :key="invoice.id"

@@ -1,6 +1,6 @@
 <template>
-    <div class="bg-slate-900/80 rounded-2xl border border-slate-800/80 p-6 backdrop-blur-xl">
-        <div class="flex items-center justify-between mb-6">
+    <div class="bg-slate-900/80 rounded-2xl border border-slate-800/80 p-6 backdrop-blur-xl h-full flex flex-col min-h-[350px] max-h-[370px]">
+        <div class="flex items-center justify-between mb-4 shrink-0">
             <div>
                 <h3 class="text-base font-bold text-slate-100">
                     Revenue Trend
@@ -11,7 +11,7 @@
                 Cash Flow
             </div>
         </div>
-        <div class="h-64">
+        <div class="flex-1 min-h-0 relative">
             <canvas ref="canvasEl"></canvas>
         </div>
     </div>
