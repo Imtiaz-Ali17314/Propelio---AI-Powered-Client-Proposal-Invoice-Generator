@@ -305,14 +305,9 @@
                 {{ $proposal->proposal_number ?? ('#'.$proposal->id) }}
             </div>
 
-            <table class="status-table">
-                <tr>
-                    <td class="status-cell"
-                        style="background-color: {{ $statusColor['bg'] }}; color: {{ $statusColor['text'] }};">
-                        {{ str_replace('_', ' ', $proposal->status) }}
-                    </td>
-                </tr>
-            </table>
+            <div class="proposal-date" style="margin-top: 4px;">
+                Date: {{ $proposal->created_at->format('d M, Y') }}
+            </div>
         </td>
     </tr>
 </table>

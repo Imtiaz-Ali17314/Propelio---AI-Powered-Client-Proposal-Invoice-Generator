@@ -46,9 +46,17 @@
           <div class="flex-1 min-w-0">
             <div class="flex flex-wrap items-center gap-2.5 mb-1.5">
               <h3 class="font-bold text-slate-100 group-hover:text-indigo-300 transition-colors truncate text-base">{{ proposal.title }}</h3>
-              <span class="text-[11px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wider shrink-0 ring-1" :class="statusBadgeClass(proposal.status)">
-                {{ proposal.status }}
-              </span>
+              <select
+                :value="proposal.status"
+                @change="handleStatusChange(proposal.id, $event.target.value)"
+                class="text-[11px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shrink-0 ring-1 cursor-pointer focus:outline-none transition-colors"
+                :class="statusBadgeClass(proposal.status)"
+              >
+                <option value="draft" class="bg-slate-900 text-slate-300">Draft</option>
+                <option value="sent" class="bg-slate-900 text-blue-400">Sent</option>
+                <option value="accepted" class="bg-slate-900 text-emerald-400">Accepted</option>
+                <option value="rejected" class="bg-slate-900 text-rose-400">Rejected</option>
+              </select>
               <span
                 v-if="proposal.generation_step !== 'completed'"
                 class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/30 shrink-0"
@@ -113,6 +121,15 @@ function statusBadgeClass(status) {
 
 function formatCurrency(amount) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
+}
+
+async function handleStatusChange(proposalId, newStatus) {
+  try {
+    await store.updateProposal(proposalId, { status: newStatus })
+    toast.success(`Status updated to ${newStatus.toUpperCase()}`)
+  } catch (err) {
+    toast.error(store.error || 'Failed to update status.')
+  }
 }
 
 async function confirmDelete(proposal) {

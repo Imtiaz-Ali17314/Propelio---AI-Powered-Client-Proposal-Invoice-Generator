@@ -6,11 +6,17 @@
                     <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">
                         {{ proposal.title }}
                     </h2>
-                    <span
-                        class="bg-emerald-500/15 text-emerald-400 text-[10px] font-bold px-2.5 py-1 rounded-full ring-1 ring-emerald-500/30 uppercase tracking-wider shrink-0"
+                    <select
+                        :value="proposal.status"
+                        @change="handleStatusChange($event.target.value)"
+                        class="text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shrink-0 ring-1 cursor-pointer focus:outline-none transition-colors"
+                        :class="statusBadgeClass(proposal.status)"
                     >
-                        {{ proposal.status }}
-                    </span>
+                        <option value="draft" class="bg-slate-900 text-slate-300">Draft</option>
+                        <option value="sent" class="bg-slate-900 text-blue-400">Sent</option>
+                        <option value="accepted" class="bg-slate-900 text-emerald-400">Accepted</option>
+                        <option value="rejected" class="bg-slate-900 text-rose-400">Rejected</option>
+                    </select>
                 </div>
                 <p class="text-sm text-slate-400 mt-1 flex items-center gap-1.5">
                     <span>Prepared for</span>
@@ -239,6 +245,25 @@ const currencySymbols = { USD: "$", PKR: "₨", EUR: "€", GBP: "£" };
 const currencySymbol = computed(
     () => currencySymbols[props.proposal?.cost_breakdown?.currency] || "",
 );
+
+function statusBadgeClass(status) {
+    const map = {
+        draft: "bg-slate-800 text-slate-400 ring-slate-700",
+        sent: "bg-blue-500/10 text-blue-400 ring-blue-500/30",
+        accepted: "bg-emerald-500/10 text-emerald-400 ring-emerald-500/30",
+        rejected: "bg-rose-500/10 text-rose-400 ring-rose-500/30",
+    };
+    return map[status] || "bg-slate-800 text-slate-400 ring-slate-700";
+}
+
+async function handleStatusChange(newStatus) {
+    try {
+        await proposalsStore.updateProposal(props.proposal.id, { status: newStatus });
+        toast.success(`Proposal status updated to ${newStatus.toUpperCase()}`);
+    } catch (e) {
+        toast.error("Failed to update proposal status.");
+    }
+}
 
 function downloadPdf() {
     proposalsStore.downloadPdf(props.proposal.id);
