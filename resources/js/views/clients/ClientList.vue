@@ -64,6 +64,7 @@ function handleSearchInput() {
                 </button>
             </div>
 
+            <!-- Search bar -->
             <div class="mb-6 max-w-md">
                 <div class="relative">
                     <input
@@ -77,7 +78,26 @@ function handleSearchInput() {
                 </div>
             </div>
 
-            <div class="bg-slate-900/80 border border-slate-800/80 rounded-2xl overflow-hidden backdrop-blur-xl shadow-xl">
+            <!-- Loading State -->
+            <div v-if="clientsStore.isLoading" class="space-y-4">
+                <div v-for="n in 3" :key="n" class="h-20 bg-slate-900/50 border border-slate-800/50 rounded-2xl animate-pulse shimmer-ai"></div>
+            </div>
+
+            <!-- Empty State -->
+            <div v-else-if="clientsStore.clients.length === 0" class="text-center py-16 bg-slate-900/80 rounded-2xl border border-dashed border-slate-800 backdrop-blur-xl p-8">
+                <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-2xl mx-auto mb-4 ring-1 ring-indigo-500/20">
+                    👥
+                </div>
+                <h3 class="text-lg font-bold text-slate-200 mb-1">No clients found</h3>
+                <p class="text-slate-400 text-sm mb-6 max-w-sm mx-auto">Create client accounts to associate with proposals and invoices.</p>
+                <button @click="openCreateModal" class="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-semibold text-sm">
+                    <span>Add First Client</span>
+                    <span>→</span>
+                </button>
+            </div>
+
+            <!-- Data Table -->
+            <div v-else class="bg-slate-900/80 border border-slate-800/80 rounded-2xl overflow-hidden backdrop-blur-xl shadow-xl">
                 <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm min-w-180">
                     <thead class="bg-slate-950/60 text-slate-400 font-bold uppercase text-xs tracking-wider border-b border-slate-800/80">
@@ -91,19 +111,11 @@ function handleSearchInput() {
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800/60">
-                        <tr v-if="clientsStore.isLoading">
-                            <td colspan="6" class="px-6 py-12 text-center text-slate-500 shimmer-ai">Loading clients...</td>
-                        </tr>
-                        <tr v-else-if="clientsStore.clients.length === 0">
-                            <td colspan="6" class="px-6 py-12 text-center text-slate-400">
-                                No clients found. Click "Add Client" to create your first client entry.
-                            </td>
-                        </tr>
                         <tr v-for="client in clientsStore.clients" :key="client.id" class="hover:bg-slate-800/40 transition-colors group">
                             <td class="px-6 py-4 font-bold text-slate-200 group-hover:text-indigo-300">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-300 font-bold text-xs flex items-center justify-center ring-1 ring-indigo-500/30">
-                                        {{ client.name[0].toUpperCase() }}
+                                    <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-300 font-bold text-xs flex items-center justify-center ring-1 ring-indigo-500/30 shrink-0">
+                                        {{ (client.name || 'C')[0].toUpperCase() }}
                                     </div>
                                     <span>{{ client.name }}</span>
                                 </div>
@@ -112,19 +124,19 @@ function handleSearchInput() {
                             <td class="px-6 py-4 text-slate-400 font-medium">{{ client.email || '—' }}</td>
                             <td class="px-6 py-4">
                                 <span class="px-2.5 py-1 rounded-full bg-slate-800 text-indigo-400 font-bold text-xs ring-1 ring-slate-700">
-                                    {{ client.proposals_count }}
+                                    {{ client.proposals_count || 0 }}
                                 </span>
                             </td>
                             <td class="px-6 py-4">
                                 <span class="px-2.5 py-1 rounded-full bg-slate-800 text-violet-400 font-bold text-xs ring-1 ring-slate-700">
-                                    {{ client.invoices_count }}
+                                    {{ client.invoices_count || 0 }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-right space-x-2">
-                                <button @click="openEditModal(client)" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-colors ring-1 ring-slate-700">
-                                    Edit
+                            <td class="px-6 py-4 text-right space-x-1">
+                                <button @click="openEditModal(client)" class="p-1.5 text-slate-400 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-lg transition-all duration-200" title="Edit Client">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                 </button>
-                                <button @click="handleDelete(client)" class="p-1.5 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors" title="Delete Client">
+                                <button @click="handleDelete(client)" class="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all duration-200" title="Delete Client">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                 </button>
                             </td>

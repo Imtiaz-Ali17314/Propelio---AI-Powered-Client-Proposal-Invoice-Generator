@@ -1,79 +1,80 @@
-<!-- resources/js/components/proposals/ReviewStep.vue -->
 <template>
     <div v-if="proposal">
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between mb-6 pb-5 border-b border-slate-800/80">
             <div>
-                <h2 class="text-xl font-semibold text-gray-900">
+                <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">
                     {{ proposal.title }}
                 </h2>
-                <p class="text-sm text-gray-500">
-                    Prepared for {{ proposal.client?.name }}
+                <p class="text-sm text-slate-400 mt-1 flex items-center gap-1.5">
+                    <span>Prepared for</span>
+                    <span class="font-semibold text-slate-200">{{ proposal.client?.name || "Client" }}</span>
                 </p>
             </div>
             <span
-                class="bg-emerald-100 text-emerald-700 text-xs font-medium px-3 py-1 rounded-full"
+                class="bg-emerald-500/15 text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-full ring-1 ring-emerald-500/30 uppercase tracking-wider"
             >
-                Ready to send
+                Ready to Send
             </span>
         </div>
 
         <div class="space-y-8">
             <!-- Overview -->
-            <section>
+            <section class="bg-slate-950/40 rounded-2xl p-5 border border-slate-800/60">
                 <h3
-                    class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2"
+                    class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5"
                 >
-                    Overview
+                    Project Overview
                 </h3>
-                <p class="text-gray-700 text-sm leading-relaxed">
-                    {{ proposal.scope?.overview }}
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    {{ proposal.scope?.overview || 'No overview provided.' }}
                 </p>
             </section>
 
             <!-- Deliverables -->
-            <section>
+            <section class="bg-slate-950/40 rounded-2xl p-5 border border-slate-800/60">
                 <h3
-                    class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2"
+                    class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3"
                 >
-                    Deliverables
+                    Key Deliverables
                 </h3>
-                <ul class="space-y-1.5">
+                <ul class="space-y-2">
                     <li
                         v-for="(item, i) in proposal.scope?.deliverables"
                         :key="i"
-                        class="flex items-start gap-2 text-sm text-gray-700"
+                        class="flex items-start gap-2.5 text-sm text-slate-300"
                     >
-                        <span class="text-indigo-500 mt-0.5">✓</span> {{ item }}
+                        <span class="text-indigo-400 font-bold mt-0.5">✓</span>
+                        <span>{{ item }}</span>
                     </li>
                 </ul>
             </section>
 
             <!-- Timeline -->
-            <section>
+            <section class="bg-slate-950/40 rounded-2xl p-5 border border-slate-800/60">
                 <h3
-                    class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3"
+                    class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center justify-between"
                 >
-                    Timeline
-                    <span class="text-gray-400 font-normal normal-case"
-                        >— {{ proposal.timeline?.total_duration }}</span
+                    <span>Milestone Timeline</span>
+                    <span class="text-indigo-400 font-semibold text-xs tracking-normal normal-case"
+                        >{{ proposal.timeline?.total_duration }}</span
                     >
                 </h3>
-                <div class="space-y-3">
+                <div class="space-y-3.5 divide-y divide-slate-800/60">
                     <div
                         v-for="(phase, i) in proposal.timeline?.phases"
                         :key="i"
-                        class="flex gap-4"
+                        class="flex gap-4 pt-3.5 first:pt-0"
                     >
                         <div
-                            class="w-24 shrink-0 text-xs font-medium text-indigo-600 pt-0.5"
+                            class="w-28 shrink-0 text-xs font-bold text-indigo-400 bg-indigo-500/10 px-2.5 py-1 rounded-lg ring-1 ring-indigo-500/20 text-center self-start"
                         >
                             {{ phase.duration }}
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-gray-900">
+                            <p class="text-sm font-bold text-slate-100">
                                 {{ phase.name }}
                             </p>
-                            <p class="text-xs text-gray-500">
+                            <p class="text-xs text-slate-400 mt-0.5 leading-relaxed">
                                 {{ phase.description }}
                             </p>
                         </div>
@@ -82,41 +83,41 @@
             </section>
 
             <!-- Cost -->
-            <section>
+            <section class="bg-slate-950/40 rounded-2xl p-5 border border-slate-800/60">
                 <h3
-                    class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3"
+                    class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3"
                 >
                     Cost Breakdown
                 </h3>
-                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                <div class="border border-slate-800/80 rounded-xl overflow-hidden">
                     <table class="w-full text-sm">
-                        <tbody>
+                        <tbody class="divide-y divide-slate-800/60">
                             <tr
                                 v-for="(item, i) in proposal.cost_breakdown
                                     ?.items"
                                 :key="i"
-                                class="border-b border-gray-100 last:border-0"
+                                class="hover:bg-slate-800/20 transition-colors"
                             >
-                                <td class="px-4 py-2.5 text-gray-700">
+                                <td class="px-4 py-3 text-slate-300 font-medium">
                                     {{ item.label }}
                                 </td>
                                 <td
-                                    class="px-4 py-2.5 text-right text-gray-900 font-medium"
+                                    class="px-4 py-3 text-right text-slate-100 font-semibold tabular-nums"
                                 >
                                     {{ currencySymbol
                                     }}{{ Number(item.amount).toLocaleString() }}
                                 </td>
                             </tr>
                         </tbody>
-                        <tfoot class="bg-gray-50">
+                        <tfoot class="bg-slate-900/90 border-t border-slate-800">
                             <tr>
                                 <td
-                                    class="px-4 py-2.5 font-semibold text-gray-900"
+                                    class="px-4 py-3 font-bold text-white text-base"
                                 >
-                                    Total
+                                    Total Amount
                                 </td>
                                 <td
-                                    class="px-4 py-2.5 text-right font-semibold text-gray-900"
+                                    class="px-4 py-3 text-right font-extrabold text-base bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent tabular-nums"
                                 >
                                     {{ currencySymbol
                                     }}{{
@@ -131,10 +132,11 @@
                 </div>
             </section>
         </div>
-        <div class="pt-8 mt-8 border-t border-gray-100">
+
+        <div class="pt-6 mt-8 border-t border-slate-800/80">
             <div
                 v-if="proposal.invoices_count > 0"
-                class="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-4"
+                class="flex items-center gap-2 text-xs text-amber-400 bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-2.5 mb-5"
             >
                 <span>⚠️</span>
                 <span>
@@ -144,38 +146,30 @@
                 </span>
             </div>
 
-            <div class="flex justify-between items-center">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <button
                     @click="$emit('back')"
-                    class="text-gray-500 hover:text-gray-700 font-medium px-4 py-2.5"
+                    class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-all self-start sm:self-auto"
                 >
-                    ← Back to edit
+                    ← Back to Edit
                 </button>
-                <div class="flex items-center gap-3">
-                    <button
-                        class="border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium px-5 py-2.5 rounded-lg transition-colors"
-                        disabled
-                        title="Coming in the next step — PDF export"
-                    >
-                        📄 Export PDF
-                    </button>
-
-                    <!-- Confirmation state replaces the button inline instead of a native browser popup -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- Confirmation state replaces the button inline -->
                     <div
                         v-if="confirmingConvert"
                         class="flex items-center gap-2"
                     >
-                        <span class="text-xs text-gray-500"
+                        <span class="text-xs text-slate-400"
                             >Create another invoice?</span
                         >
                         <button
-                            class="px-3 py-2 border border-gray-300 text-gray-600 rounded-lg text-sm hover:bg-gray-50"
+                            class="px-3 py-2 border border-slate-700 text-slate-300 rounded-xl text-sm hover:bg-slate-800"
                             @click="confirmingConvert = false"
                         >
                             Cancel
                         </button>
                         <button
-                            class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700"
+                            class="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-semibold hover:from-indigo-500 hover:to-violet-500"
                             :disabled="converting"
                             @click="convertToInvoice"
                         >
@@ -185,7 +179,7 @@
 
                     <button
                         v-else
-                        class="px-4 py-2 border border-indigo-600 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-50"
+                        class="px-4 py-2.5 border border-indigo-500/50 text-indigo-400 hover:bg-indigo-500/10 rounded-xl text-sm font-semibold transition-all"
                         :disabled="converting"
                         @click="handleConvertClick"
                     >
@@ -200,9 +194,9 @@
 
                     <router-link
                         :to="{ name: 'proposals.list' }"
-                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-5 py-2.5 rounded-lg transition-colors"
+                        class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-600/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ring-1 ring-white/20"
                     >
-                        Save & Go to List
+                        <span>Save & Go to Hub</span>
                     </router-link>
                 </div>
             </div>
