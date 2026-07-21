@@ -6,12 +6,17 @@ import RevenueChart from "@/components/dashboard/RevenueChart.vue";
 import RecentActivity from "@/components/dashboard/RecentActivity.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useDashboardStore } from "@/stores/dashboard";
+import { useToast } from "@/composables/useToast";
 
 const authStore = useAuthStore();
 const dashboardStore = useDashboardStore();
+const toast = useToast();
 
-onMounted(() => {
-    dashboardStore.fetchDashboard();
+onMounted(async () => {
+    await dashboardStore.fetchDashboard();
+    if (dashboardStore.error) {
+        toast.error(dashboardStore.error);
+    }
 });
 
 function currency(amount) {

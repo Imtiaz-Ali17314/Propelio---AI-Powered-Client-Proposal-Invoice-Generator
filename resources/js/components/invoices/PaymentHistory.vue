@@ -93,6 +93,7 @@
 <script setup>
 import { reactive, ref } from "vue";
 import { useInvoicesStore } from "@/stores/invoices";
+import { useToast } from "@/composables/useToast";
 
 const props = defineProps({
     invoice: { type: Object, required: true },
@@ -101,6 +102,7 @@ const props = defineProps({
 const emit = defineEmits(["recorded", "deleted"]);
 
 const store = useInvoicesStore();
+const toast = useToast();
 const showForm = ref(false);
 
 const form = reactive({
@@ -126,15 +128,25 @@ function formatMoney(value) {
 }
 
 async function handleSubmit() {
-    await store.recordPayment(props.invoice.id, form);
-    form.amount = "";
-    showForm.value = false;
-    emit("recorded");
+    try {
+        await store.recordPayment(props.invoice.id, form);
+        toast.success("Payment recorded successfully.");
+        form.amount = "";
+        showForm.value = false;
+        emit("recorded");
+    } catch (e) {
+        toast.error(store.error || "Failed to record payment.");
+    }
 }
 
 async function handleDelete(paymentId) {
     if (!confirm("Remove this payment record?")) return;
-    await store.deletePayment(props.invoice.id, paymentId);
-    emit("deleted");
+    try {
+        await store.deletePayment(props.invoice.id, paymentId);
+        toast.success("Payment record removed.");
+        emit("deleted");
+    } catch (e) {
+        toast.error(store.error || "Failed to delete payment.");
+    }
 }
 </script>

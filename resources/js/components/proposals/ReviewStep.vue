@@ -208,9 +208,11 @@
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useInvoicesStore } from "@/stores/invoices";
+import { useToast } from "@/composables/useToast";
 
 const router = useRouter();
 const invoicesStore = useInvoicesStore();
+const toast = useToast();
 const converting = ref(false);
 const confirmingConvert = ref(false);
 
@@ -242,7 +244,12 @@ async function convertToInvoice() {
         const invoice = await invoicesStore.convertFromProposal(
             props.proposal.id,
         );
+        toast.success("Invoice created from proposal.");
         router.push(`/invoices/${invoice.id}`);
+    } catch (e) {
+        toast.error(
+            invoicesStore.error || "Failed to convert proposal to invoice.",
+        );
     } finally {
         converting.value = false;
         confirmingConvert.value = false;

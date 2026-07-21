@@ -81,8 +81,10 @@ import { onMounted } from 'vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import StatusBadge from '@/components/invoices/StatusBadge.vue'
 import { useInvoicesStore } from '@/stores/invoices'
+import { useToast } from '@/composables/useToast'
 
 const store = useInvoicesStore()
+const toast = useToast()
 
 onMounted(() => {
   store.fetchAll()
@@ -99,6 +101,11 @@ function formatMoney(value) {
 
 async function handleDelete(id) {
   if (!confirm('Delete this invoice? This cannot be undone.')) return
-  await store.remove(id)
+  try {
+    await store.remove(id)
+    toast.success('Invoice deleted.')
+  } catch (e) {
+    toast.error(store.error || 'Failed to delete invoice.')
+  }
 }
 </script>

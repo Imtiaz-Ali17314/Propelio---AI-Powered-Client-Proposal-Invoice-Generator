@@ -45,7 +45,7 @@
                     </button>
                     <button
                         class="inline-flex items-center gap-2 px-4 py-2.5 bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ring-1 ring-white/20"
-                        @click="store.downloadPdf(invoice.id)"
+                        @click="handleDownloadPdf"
                     >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         Download PDF
@@ -145,10 +145,12 @@ import AppLayout from "@/components/layout/AppLayout.vue";
 import StatusBadge from "@/components/invoices/StatusBadge.vue";
 import PaymentHistory from "@/components/invoices/PaymentHistory.vue";
 import { useInvoicesStore } from "@/stores/invoices";
+import { useToast } from "@/composables/useToast";
 
 const route = useRoute();
 const router = useRouter();
 const store = useInvoicesStore();
+const toast = useToast();
 
 const invoice = computed(() => store.currentInvoice);
 
@@ -168,8 +170,17 @@ function formatMoney(value) {
     });
 }
 
-function refresh() {
-    store.fetchOne(route.params.id);
+function handleDownloadPdf() {
+    store.downloadPdf(invoice.value.id);
+    toast.info("Preparing your PDF download…");
+}
+
+async function refresh() {
+    try {
+        await store.fetchOne(route.params.id);
+    } catch (e) {
+        toast.error(store.error || "Failed to load invoice.");
+    }
 }
 
 onMounted(refresh);

@@ -220,11 +220,13 @@ import { useRoute, useRouter } from "vue-router";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import { useInvoicesStore } from "@/stores/invoices";
 import { useClientsStore } from "@/stores/clients";
+import { useToast } from "@/composables/useToast";
 
 const route = useRoute();
 const router = useRouter();
 const store = useInvoicesStore();
 const clientsStore = useClientsStore();
+const toast = useToast();
 
 const isEdit = computed(() => !!route.params.id);
 
@@ -243,23 +245,27 @@ onMounted(async () => {
     }
 
     if (isEdit.value) {
-        const invoice = await store.fetchOne(route.params.id);
-        form.client_id = invoice.client_id;
-        form.issued_date = invoice.issued_date?.slice(0, 10) ?? "";
-        form.due_date = invoice.due_date?.slice(0, 10) ?? "";
-        form.tax_percent =
-            invoice.subtotal > 0
-                ? Math.round((invoice.tax / invoice.subtotal) * 10000) / 100
-                : 0;
-        form.notes = invoice.notes ?? "";
-        form.items = invoice.items.length
-            ? invoice.items.map((i) => ({
-                  id: i.id,
-                  description: i.description,
-                  quantity: Number(i.quantity),
-                  rate: Number(i.rate),
-              }))
-            : [{ description: "", quantity: 1, rate: 0 }];
+        try {
+            const invoice = await store.fetchOne(route.params.id);
+            form.client_id = invoice.client_id;
+            form.issued_date = invoice.issued_date?.slice(0, 10) ?? "";
+            form.due_date = invoice.due_date?.slice(0, 10) ?? "";
+            form.tax_percent =
+                invoice.subtotal > 0
+                    ? Math.round((invoice.tax / invoice.subtotal) * 10000) / 100
+                    : 0;
+            form.notes = invoice.notes ?? "";
+            form.items = invoice.items.length
+                ? invoice.items.map((i) => ({
+                      id: i.id,
+                      description: i.description,
+                      quantity: Number(i.quantity),
+                      rate: Number(i.rate),
+                  }))
+                : [{ description: "", quantity: 1, rate: 0 }];
+        } catch (e) {
+            toast.error(store.error || "Failed to load invoice.");
+        }
     }
 });
 
@@ -301,13 +307,15 @@ async function handleSubmit() {
     try {
         if (isEdit.value) {
             await store.update(route.params.id, payload);
+            toast.success("Invoice updated successfully.");
             router.push(`/invoices/${route.params.id}`);
         } else {
             const invoice = await store.create(payload);
+            toast.success("Invoice created successfully.");
             router.push(`/invoices/${invoice.id}`);
         }
     } catch (e) {
-        // store.error already set; a toast/alert component can read it if you have one
+        toast.error(store.error || "Failed to save invoice. Please try again.");
     }
 }
 </script>

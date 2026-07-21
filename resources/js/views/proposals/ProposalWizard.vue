@@ -2,6 +2,20 @@
 <template>
     <AppLayout>
         <div class="max-w-5xl mx-auto py-6 px-2 sm:px-4">
+            <!-- Top Back Navigation -->
+            <div class="mb-5 flex items-center justify-between">
+                <router-link
+                    :to="{ name: 'proposals.list' }"
+                    class="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-indigo-400 transition-colors px-3 py-1.5 rounded-lg hover:bg-slate-900/60 ring-1 ring-transparent hover:ring-slate-800"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    <span>Back to Proposals</span>
+                </router-link>
+                <span v-if="proposal" class="text-xs font-medium text-slate-400">
+                    {{ proposal.title }}
+                </span>
+            </div>
+
             <!-- Stepper Container -->
             <div class="bg-slate-900/80 rounded-2xl border border-slate-800/80 p-4 sm:p-6 mb-8 backdrop-blur-xl shadow-xl">
                 <div class="flex items-center justify-between">
