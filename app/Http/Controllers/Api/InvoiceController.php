@@ -169,6 +169,29 @@ class InvoiceController extends Controller
         return $pdfService->stream($invoice);
     }
 
+    public function toggleCancel(Invoice $invoice)
+    {
+        $this->authorize('update', $invoice);
+
+        if ($invoice->status === 'cancelled') {
+            $invoice->status = 'unpaid';
+            $invoice->syncStatus();
+            $message = 'Invoice reactivated successfully.';
+        } else {
+            $invoice->update(['status' => 'cancelled']);
+            $message = 'Invoice cancelled successfully.';
+        }
+
+        $invoice->load(['client', 'items', 'payments' => fn ($q) => $q->latest('paid_at')]);
+
+        return response()->json([
+            ...$invoice->toArray(),
+            'paid_amount' => $invoice->paidAmount,
+            'balance_due' => $invoice->balanceDue,
+            'message' => $message,
+        ]);
+    }
+
     private function generateInvoiceNumber(): string
     {
         $year = now()->year;

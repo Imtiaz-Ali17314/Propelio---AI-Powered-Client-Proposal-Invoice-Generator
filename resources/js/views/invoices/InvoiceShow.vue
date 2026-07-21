@@ -53,6 +53,26 @@
                 </div>
             </div>
 
+            <!-- Cancelled Alert Banner -->
+            <div
+                v-if="invoice.status === 'cancelled'"
+                class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-2xl p-4.5 backdrop-blur-xl shadow-lg"
+            >
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-base shrink-0 ring-1 ring-rose-500/30">🚫</div>
+                    <div>
+                        <p class="text-sm font-bold text-slate-100">Invoice Cancelled</p>
+                        <p class="text-xs text-slate-400 mt-0.5">This invoice has been voided. Automatic payment syncing is paused.</p>
+                    </div>
+                </div>
+                <button
+                    @click="handleToggleCancel"
+                    class="px-4 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 ring-1 ring-emerald-500/40 text-xs font-bold transition-all self-start sm:self-auto shrink-0"
+                >
+                    Reactivate Invoice
+                </button>
+            </div>
+
             <!-- Summary Cards -->
             <div class="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-5 sm:p-6 backdrop-blur-xl grid grid-cols-2 sm:grid-cols-4 gap-5">
                 <div>
@@ -134,6 +154,21 @@
                 @recorded="refresh"
                 @deleted="refresh"
             />
+
+            <!-- Invoice Status Management (Cancel Action) -->
+            <div
+                v-if="invoice.status !== 'cancelled'"
+                class="pt-4 border-t border-slate-800/60 flex items-center justify-between text-xs text-slate-500"
+            >
+                <span>Need to void this invoice?</span>
+                <button
+                    @click="handleToggleCancel"
+                    class="text-rose-400 hover:text-rose-300 font-semibold flex items-center gap-1.5 transition-colors px-3 py-1.5 rounded-lg hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20"
+                >
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+                    <span>Cancel / Void Invoice</span>
+                </button>
+            </div>
         </div>
     </AppLayout>
 </template>
@@ -173,6 +208,22 @@ function formatMoney(value) {
 function handleDownloadPdf() {
     store.downloadPdf(invoice.value.id);
     toast.info("Preparing your PDF download…");
+}
+
+async function handleToggleCancel() {
+    const isCancelling = invoice.value.status !== 'cancelled';
+    const confirmMsg = isCancelling
+        ? `Are you sure you want to cancel invoice "${invoice.value.invoice_number}"?`
+        : `Reactivate invoice "${invoice.value.invoice_number}"?`;
+
+    if (!confirm(confirmMsg)) return;
+
+    try {
+        const res = await store.toggleCancel(invoice.value.id);
+        toast.success(res.message || (isCancelling ? 'Invoice cancelled.' : 'Invoice reactivated.'));
+    } catch (e) {
+        toast.error(store.error || 'Failed to update invoice status.');
+    }
 }
 
 async function refresh() {

@@ -111,6 +111,23 @@ export const useInvoicesStore = defineStore("invoices", {
             window.open(`/api/invoices/${id}/pdf`, "_blank");
         },
 
+        async toggleCancel(id) {
+            this.saving = true;
+            this.error = null;
+            try {
+                const { data } = await axios.post(`/api/invoices/${id}/toggle-cancel`);
+                this.currentInvoice = data;
+                const idx = this.invoices.findIndex((i) => i.id === parseInt(id));
+                if (idx !== -1) this.invoices[idx] = data;
+                return data;
+            } catch (e) {
+                this.error = e.response?.data?.message || "Failed to update invoice status.";
+                throw e;
+            } finally {
+                this.saving = false;
+            }
+        },
+
         async recordPayment(invoiceId, payload) {
             this.saving = true;
             this.error = null;

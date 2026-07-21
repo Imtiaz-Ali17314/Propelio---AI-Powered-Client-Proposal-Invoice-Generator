@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('invoices', InvoiceController::class);
     Route::post('proposals/{proposal}/convert-to-invoice', [InvoiceController::class, 'storeFromProposal']);
     Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf']);
+    Route::post('invoices/{invoice}/toggle-cancel', [InvoiceController::class, 'toggleCancel']);
 
     Route::get('invoices/{invoice}/payments', [PaymentController::class, 'index']);
     Route::post('invoices/{invoice}/payments', [PaymentController::class, 'store']);

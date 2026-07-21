@@ -15,31 +15,70 @@
         </router-link>
       </div>
 
-      <!-- Loading -->
-      <div v-if="store.loading && store.proposals.length === 0" class="space-y-4">
-        <div v-for="n in 3" :key="n" class="h-20 bg-slate-900/50 border border-slate-800/50 rounded-2xl animate-pulse shimmer-ai"></div>
+      <!-- Search & Filters Bar -->
+      <div v-if="store.proposals.length > 0" class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/80 border border-slate-800/80 p-3.5 sm:p-4 rounded-2xl backdrop-blur-xl">
+        <!-- Search Input -->
+        <div class="relative flex-1 max-w-md">
+          <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search proposals by title or client..."
+            class="w-full bg-slate-950/80 border border-slate-800 rounded-xl pl-10 pr-9 py-2 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+          />
+          <button
+            v-if="searchQuery"
+            @click="searchQuery = ''"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 text-xs"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Status Filter Pills -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+          <button
+            v-for="status in statusOptions"
+            :key="status.value"
+            @click="statusFilter = status.value"
+            class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5"
+            :class="
+              statusFilter === status.value
+                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                : 'bg-slate-950/60 text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-slate-800/80'
+            "
+          >
+            <span>{{ status.label }}</span>
+            <span
+              class="px-1.5 py-0.2 rounded-full text-[10px]"
+              :class="statusFilter === status.value ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'"
+            >
+              {{ getStatusCount(status.value) }}
+            </span>
+          </button>
+        </div>
       </div>
 
-      <!-- Empty state -->
+      <!-- Empty Filtered Results State -->
       <div
-        v-else-if="!store.loading && store.proposals.length === 0"
-        class="text-center py-16 bg-slate-900/80 rounded-2xl border border-dashed border-slate-800 backdrop-blur-xl p-8"
+        v-if="!store.loading && store.proposals.length > 0 && filteredProposals.length === 0"
+        class="text-center py-12 bg-slate-900/80 rounded-2xl border border-slate-800/80 backdrop-blur-xl p-6"
       >
-        <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-2xl mx-auto mb-4 ring-1 ring-indigo-500/20">
-          📋
-        </div>
-        <h3 class="text-lg font-bold text-slate-200 mb-1">No proposals yet</h3>
-        <p class="text-slate-400 text-sm mb-6 max-w-sm mx-auto">Generate your first AI proposal with automated scope, timeline, and pricing breakdown.</p>
-        <router-link :to="{ name: 'proposals.new' }" class="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-semibold text-sm">
-          <span>Create Proposal Now</span>
-          <span>→</span>
-        </router-link>
+        <p class="text-slate-400 text-sm mb-3">No proposals matching your filter criteria.</p>
+        <button
+          @click="clearFilters"
+          class="text-xs font-semibold text-indigo-400 hover:text-indigo-300 underline"
+        >
+          Clear filters
+        </button>
       </div>
 
       <!-- Proposal cards -->
       <div v-else class="grid gap-4">
         <div
-          v-for="proposal in store.proposals"
+          v-for="proposal in filteredProposals"
           :key="proposal.id"
           class="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 backdrop-blur-xl hover:border-slate-700/80 transition-all duration-200 hover:shadow-xl hover:shadow-indigo-500/5 group"
         >
@@ -97,13 +136,46 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { useProposalsStore } from '@/stores/proposals'
 import { useToast } from '@/composables/useToast'
 
 const store = useProposalsStore()
 const toast = useToast()
+
+const searchQuery = ref('')
+const statusFilter = ref('all')
+
+const statusOptions = [
+  { label: 'All', value: 'all' },
+  { label: 'Draft', value: 'draft' },
+  { label: 'Sent', value: 'sent' },
+  { label: 'Accepted', value: 'accepted' },
+  { label: 'Rejected', value: 'rejected' },
+]
+
+const filteredProposals = computed(() => {
+  return store.proposals.filter(proposal => {
+    const q = searchQuery.value.trim().toLowerCase()
+    const matchesSearch = !q ||
+      proposal.title?.toLowerCase().includes(q) ||
+      proposal.client?.name?.toLowerCase().includes(q)
+    
+    const matchesStatus = statusFilter.value === 'all' || proposal.status === statusFilter.value
+    return matchesSearch && matchesStatus
+  })
+})
+
+function getStatusCount(statusValue) {
+  if (statusValue === 'all') return store.proposals.length
+  return store.proposals.filter(p => p.status === statusValue).length
+}
+
+function clearFilters() {
+  searchQuery.value = ''
+  statusFilter.value = 'all'
+}
 
 onMounted(() => {
   store.fetchProposals()
