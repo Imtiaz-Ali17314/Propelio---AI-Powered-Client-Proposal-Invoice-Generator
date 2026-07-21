@@ -179,9 +179,18 @@ function goToStep(stepKey) {
     if (canNavigateTo(stepKey)) currentStep.value = stepKey;
 }
 
+// Flag to skip the watcher re-init when we programmatically navigate
+// after brief creation (to avoid resetting currentStep back to "brief")
+const skipNextWatchInit = ref(false);
+
 async function handleBriefCreated(newProposal) {
     toast.success("Proposal created — let's generate the scope.");
+    // Set proposal in store directly so we don't need to re-fetch
+    store.currentProposal = newProposal;
+    // Set step BEFORE navigating
     currentStep.value = "scope";
+    // Tell the watcher to skip the next initWizard call
+    skipNextWatchInit.value = true;
     router.replace({
         name: "proposals.wizard",
         params: { id: newProposal.id },
@@ -276,6 +285,13 @@ onMounted(initWizard);
 
 watch(
     () => route.params.id,
-    () => initWizard(),
+    () => {
+        // Skip re-init if we just navigated from brief creation
+        if (skipNextWatchInit.value) {
+            skipNextWatchInit.value = false;
+            return;
+        }
+        initWizard();
+    },
 );
 </script>
