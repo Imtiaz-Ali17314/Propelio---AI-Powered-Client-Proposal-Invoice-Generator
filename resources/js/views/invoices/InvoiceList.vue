@@ -61,9 +61,27 @@
         </div>
       </div>
 
+      <!-- Loading State -->
+      <div v-if="store.loading" class="space-y-4">
+        <div v-for="n in 3" :key="n" class="h-20 bg-slate-900/50 border border-slate-800/50 rounded-2xl animate-pulse shimmer-ai"></div>
+      </div>
+
+      <!-- Empty State (No Invoices) -->
+      <div v-else-if="store.invoices.length === 0" class="text-center py-16 bg-slate-900/80 rounded-2xl border border-dashed border-slate-800 backdrop-blur-xl p-8">
+        <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-2xl mx-auto mb-4 ring-1 ring-indigo-500/20">
+          💳
+        </div>
+        <h3 class="text-lg font-bold text-slate-200 mb-1">No invoices found</h3>
+        <p class="text-slate-400 text-sm mb-6 max-w-sm mx-auto">Create and manage client invoices, track partial payments, and handle billing easily.</p>
+        <router-link to="/invoices/create" class="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-semibold text-sm">
+          <span>Create First Invoice</span>
+          <span>→</span>
+        </router-link>
+      </div>
+
       <!-- Empty Filtered State -->
       <div
-        v-if="!store.loading && store.invoices.length > 0 && filteredInvoices.length === 0"
+        v-else-if="filteredInvoices.length === 0"
         class="text-center py-12 bg-slate-900/80 rounded-2xl border border-slate-800/80 backdrop-blur-xl p-6"
       >
         <p class="text-slate-400 text-sm mb-3">No invoices matching your filter criteria.</p>

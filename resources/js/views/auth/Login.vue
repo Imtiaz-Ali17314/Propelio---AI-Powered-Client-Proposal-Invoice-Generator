@@ -13,13 +13,36 @@ const form = ref({
     password: '',
 });
 
+const errors = ref({});
+
+function getErrorMessage(err, fallback) {
+    if (err.response?.data?.errors) {
+        const keys = Object.keys(err.response.data.errors);
+        if (keys.length > 0 && err.response.data.errors[keys[0]]?.[0]) {
+            return err.response.data.errors[keys[0]][0];
+        }
+    }
+    if (err.response?.data?.message) {
+        return err.response.data.message;
+    }
+    return fallback;
+}
+
 async function handleSubmit() {
+    errors.value = {};
+    if (!form.value.email || !form.value.password) {
+        toast.warning('Please enter both email and password.');
+        return;
+    }
+
     try {
         await authStore.login(form.value);
-        toast.success('Welcome back!');
+        toast.success('Logged in successfully. Welcome back!');
         router.push({ name: 'dashboard' });
     } catch (err) {
-        toast.error('Invalid email or password.');
+        errors.value = err.response?.data?.errors || {};
+        const msg = getErrorMessage(err, 'Invalid email or password.');
+        toast.error(msg);
     }
 }
 </script>

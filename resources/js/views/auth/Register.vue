@@ -17,15 +17,47 @@ const form = ref({
 
 const errors = ref({});
 
+function getErrorMessage(err, fallback) {
+    if (err.response?.data?.errors) {
+        const keys = Object.keys(err.response.data.errors);
+        if (keys.length > 0 && err.response.data.errors[keys[0]]?.[0]) {
+            return err.response.data.errors[keys[0]][0];
+        }
+    }
+    if (err.response?.data?.message) {
+        return err.response.data.message;
+    }
+    return fallback;
+}
+
 async function handleSubmit() {
     errors.value = {};
+
+    if (!form.value.name || !form.value.email || !form.value.password) {
+        toast.warning('Please fill in all required fields.');
+        return;
+    }
+
+    if (form.value.password.length < 8) {
+        errors.value = { password: ['Password must be at least 8 characters long.'] };
+        toast.warning('Password must be at least 8 characters long.');
+        return;
+    }
+
+    if (form.value.password !== form.value.password_confirmation) {
+        errors.value = { password_confirmation: ['Passwords do not match.'] };
+        toast.warning('Passwords do not match.');
+        return;
+    }
+
     try {
         await authStore.register(form.value);
-        toast.success('Account created — welcome to Propelio!');
+        toast.success('Account created successfully! Welcome to Propelio.');
         router.push({ name: 'dashboard' });
     } catch (err) {
-        errors.value = authStore.error ?? {};
-        toast.error('Please fix the errors below and try again.');
+        errors.value = err.response?.data?.errors || authStore.error || {};
+        const msg = getErrorMessage(err, 'Registration failed. Please check your inputs.');
+        toast.error(msg);
     }
 }
 </script>
@@ -56,7 +88,6 @@ async function handleSubmit() {
                         placeholder="e.g. Nexus Design Agency"
                         class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                     />
-                    <p v-if="errors.name" class="text-rose-400 text-xs mt-1">{{ errors.name[0] }}</p>
                 </div>
 
                 <div>
@@ -68,7 +99,6 @@ async function handleSubmit() {
                         placeholder="you@agency.com"
                         class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                     />
-                    <p v-if="errors.email" class="text-rose-400 text-xs mt-1">{{ errors.email[0] }}</p>
                 </div>
 
                 <div>
@@ -80,6 +110,7 @@ async function handleSubmit() {
                         placeholder="••••••••"
                         class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                     />
+                    <p class="text-slate-500 text-[11px] mt-1">Must be at least 8 characters</p>
                 </div>
 
                 <div>
