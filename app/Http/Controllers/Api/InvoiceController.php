@@ -56,10 +56,15 @@ class InvoiceController extends Controller
             ]);
 
             foreach ($request->items as $item) {
+                $rawRate = $item['rate'] ?? 0;
+                $cleanRate = is_numeric($rawRate)
+                    ? (float) $rawRate
+                    : (float) preg_replace('/[^0-9.]/', '', (string) $rawRate);
+
                 $invoice->items()->create([
                     'description' => $item['description'],
-                    'quantity' => $item['quantity'],
-                    'rate' => $item['rate'],
+                    'quantity' => (float) ($item['quantity'] ?? 1),
+                    'rate' => $cleanRate,
                 ]);
             }
 
@@ -88,10 +93,15 @@ class InvoiceController extends Controller
             // Replace items wholesale — simplest correct approach for a form-based edit.
             $invoice->items()->delete();
             foreach ($request->items as $item) {
+                $rawRate = $item['rate'] ?? 0;
+                $cleanRate = is_numeric($rawRate)
+                    ? (float) $rawRate
+                    : (float) preg_replace('/[^0-9.]/', '', (string) $rawRate);
+
                 $invoice->items()->create([
                     'description' => $item['description'],
-                    'quantity' => $item['quantity'],
-                    'rate' => $item['rate'],
+                    'quantity' => (float) ($item['quantity'] ?? 1),
+                    'rate' => $cleanRate,
                 ]);
             }
 
@@ -128,36 +138,70 @@ class InvoiceController extends Controller
         $this->authorize('view', $proposal);
         $this->authorize('create', Invoice::class);
 
-        $lineItems = $proposal->cost_breakdown['items'] ?? [];
-        $taxPercent = $proposal->cost_breakdown['tax_percent'] ?? 0;
+        $costBreakdown = $proposal->cost_breakdown;
+        if (is_string($costBreakdown)) {
+            $costBreakdown = json_decode($costBreakdown, true) ?? [];
+        }
 
-        $invoice = DB::transaction(function () use ($request, $proposal, $lineItems, $taxPercent) {
-            $invoice = $request->user()->invoices()->create([
-                'client_id' => $proposal->client_id,
+        $lineItems = is_array($costBreakdown) ? ($costBreakdown['items'] ?? []) : [];
+        $taxPercent = is_array($costBreakdown) ? (float) ($costBreakdown['tax_percent'] ?? 0) : 0;
+
+        // Fallback if no specific line items are present
+        if (empty($lineItems)) {
+            $lineItems = [
+                [
+                    'label' => $proposal->title ?: 'Proposal Service',
+                    'amount' => $proposal->total_amount ?? 0,
+                ],
+            ];
+        }
+
+        try {
+            $invoice = DB::transaction(function () use ($request, $proposal, $lineItems, $taxPercent) {
+                $invoice = $request->user()->invoices()->create([
+                    'client_id' => $proposal->client_id,
+                    'proposal_id' => $proposal->id,
+                    'invoice_number' => $this->generateInvoiceNumber(),
+                    'status' => 'unpaid',
+                    'issued_date' => now()->toDateString(),
+                    'due_date' => now()->addDays(14)->toDateString(),
+                ]);
+
+                foreach ($lineItems as $item) {
+                    $rawRate = $item['amount'] ?? $item['rate'] ?? $item['price'] ?? 0;
+                    $cleanRate = is_numeric($rawRate)
+                        ? (float) $rawRate
+                        : (float) preg_replace('/[^0-9.]/', '', (string) $rawRate);
+
+                    $description = $item['label'] ?? $item['name'] ?? $item['description'] ?? 'Item';
+
+                    $invoice->items()->create([
+                        'description' => (string) $description,
+                        'quantity' => 1,
+                        'rate' => $cleanRate,
+                    ]);
+                }
+
+                // Carry over the tax_percent the AI proposal used, so totals line up.
+                $invoice->recalculateTotals($taxPercent);
+
+                return $invoice;
+            });
+
+            $invoice->load(['client', 'items']);
+
+            return response()->json($invoice, 201);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to convert proposal to invoice', [
                 'proposal_id' => $proposal->id,
-                'invoice_number' => $this->generateInvoiceNumber(),
-                'status' => 'unpaid',
-                'issued_date' => now()->toDateString(),
-                'due_date' => now()->addDays(14)->toDateString(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
 
-            foreach ($lineItems as $item) {
-                $invoice->items()->create([
-                    'description' => $item['label'] ?? 'Item',
-                    'quantity' => 1,
-                    'rate' => $item['amount'] ?? 0,
-                ]);
-            }
-
-            // Carry over the tax_percent the AI proposal used, so totals line up.
-            $invoice->recalculateTotals($taxPercent);
-
-            return $invoice;
-        });
-
-        $invoice->load(['client', 'items']);
-
-        return response()->json($invoice, 201);
+            return response()->json([
+                'message' => 'Failed to convert proposal to invoice: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function downloadPdf(Invoice $invoice, InvoicePdfService $pdfService)
@@ -197,16 +241,16 @@ class InvoiceController extends Controller
         $year = now()->year;
         $prefix = "INV-{$year}-";
 
-        // Find the highest existing number this year and increment from there —
-        // counting rows breaks once any invoice in between gets deleted.
+        // Find the highest existing invoice by ID for safety
         $lastNumber = Invoice::where('invoice_number', 'like', "{$prefix}%")
-            ->orderByDesc('invoice_number')
+            ->orderByDesc('id')
             ->value('invoice_number');
 
         $nextSequence = 1;
 
         if ($lastNumber) {
-            $lastSequence = (int) substr($lastNumber, strlen($prefix));
+            $parts = explode('-', $lastNumber);
+            $lastSequence = (int) end($parts);
             $nextSequence = $lastSequence + 1;
         }
 
